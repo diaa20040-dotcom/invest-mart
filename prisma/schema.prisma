@@ -1,0 +1,86 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  passwordHash String
+  name         String?
+  referralCode String   @unique
+  referredById String?
+  referredBy   User?    @relation("Referrals", fields: [referredById], references: [id])
+  referrals    User[]   @relation("Referrals")
+  balance      Float    @default(0)
+  isAdmin      Boolean  @default(false)
+  createdAt    DateTime @default(now())
+
+  deposits     Deposit[]
+  withdrawals  Withdrawal[]
+  userPlans    UserPlan[]
+  transactions Transaction[]
+}
+
+model Plan {
+  id              String     @id @default(cuid())
+  nameEn          String
+  nameAr          String
+  priceUsd        Float
+  dailyProfitUsd  Float
+  active          Boolean    @default(true)
+  sortOrder       Int        @default(0)
+  createdAt       DateTime   @default(now())
+  userPlans       UserPlan[]
+}
+
+model UserPlan {
+  id            String   @id @default(cuid())
+  userId        String
+  user          User     @relation(fields: [userId], references: [id])
+  planId        String
+  plan          Plan     @relation(fields: [planId], references: [id])
+  purchasedAt   DateTime @default(now())
+  lastClaimedAt DateTime?
+}
+
+model Deposit {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  amount    Float
+  status    String   @default("pending")
+  note      String?
+  createdAt DateTime @default(now())
+}
+
+model Withdrawal {
+  id            String   @id @default(cuid())
+  userId        String
+  user          User     @relation(fields: [userId], references: [id])
+  amount        Float
+  walletAddress String
+  status        String   @default("pending")
+  createdAt     DateTime @default(now())
+}
+
+model Transaction {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  type      String
+  amount    Float
+  meta      String?
+  createdAt DateTime @default(now())
+}
+
+model SiteSetting {
+  id              Int    @id @default(1)
+  depositWallet   String @default("TBD_DEPOSIT_WALLET")
+  withdrawWallet  String @default("TBD_WITHDRAW_WALLET")
+  referralPercent Float  @default(10)
+}

@@ -46,10 +46,10 @@ export function PlansClient({
         {plans.map((plan) => (
           <div
             key={plan.id}
-            className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm"
+            className="card p-5"
           >
             <h2 className="text-lg font-bold text-slate-800">{plan.name}</h2>
-            <p className="mt-2 text-3xl font-bold text-emerald-700">
+            <p className="mt-2 text-3xl font-bold text-indigo-600">
               ${plan.priceUsd}
             </p>
             <p className="mt-1 text-sm text-slate-600">
@@ -58,7 +58,7 @@ export function PlansClient({
             <button
               type="button"
               onClick={() => buy(plan.id)}
-              className="mt-4 w-full rounded-xl bg-emerald-600 py-2 font-medium text-white"
+              className="mt-4 w-full rounded-xl bg-indigo-600 py-2.5 font-medium text-white shadow-sm hover:bg-indigo-700"
             >
               {t(locale, "buyPlan")}
             </button>

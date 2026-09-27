@@ -55,17 +55,17 @@ export function ProfileActions({
 
   return (
     <div className="grid gap-4 md:grid-cols-2">
-      <div className="rounded-2xl border bg-white p-5">
+      <div className="card p-5">
         <h2 className="font-bold">{t(locale, "dailyProfit")}</h2>
         <button
           type="button"
           onClick={claimProfit}
-          className="mt-3 w-full rounded-xl bg-teal-600 py-2 text-white"
+          className="mt-3 w-full rounded-xl bg-indigo-600 py-2.5 text-white shadow-sm"
         >
           {t(locale, "dailyProfit")}
         </button>
       </div>
-      <div className="rounded-2xl border bg-white p-5">
+      <div className="card p-5">
         <h2 className="font-bold">{t(locale, "withdrawTitle")}</h2>
         <p className="mt-1 text-xs text-slate-500">{t(locale, "withdrawWalletHint")}</p>
         <p className="mt-2 break-all rounded bg-slate-100 p-2 font-mono text-xs">
@@ -98,7 +98,7 @@ export function ProfileActions({
           </button>
         </form>
       </div>
-      {msg && <p className="text-sm text-emerald-700 md:col-span-2">{msg}</p>}
+      {msg && <p className="text-sm text-indigo-600 md:col-span-2">{msg}</p>}
     </div>
   );
 }

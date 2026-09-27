@@ -1,5 +1,4 @@
 import Image from "next/image";
-import Link from "next/link";
 import { getLocale } from "@/lib/locale";
 import { t } from "@/lib/i18n";
 
@@ -30,41 +29,33 @@ export default async function HomePage() {
   const locale = await getLocale();
 
   return (
-    <div className="space-y-10">
-      <section className="overflow-hidden rounded-3xl bg-gradient-to-br from-emerald-700 to-teal-900 px-6 py-10 text-white shadow-lg">
-        <h1 className="max-w-xl text-3xl font-bold leading-tight md:text-4xl">
-          {t(locale, "heroTitle")}
-        </h1>
-        <p className="mt-3 max-w-lg text-emerald-50/90">{t(locale, "heroSubtitle")}</p>
-        <Link
-          href="/plans"
-          className="mt-6 inline-block rounded-xl bg-white px-5 py-2.5 font-semibold text-emerald-800 shadow"
-        >
-          {t(locale, "heroCta")}
-        </Link>
-      </section>
-
+    <div className="space-y-6">
       <section>
-        <h2 className="mb-4 text-xl font-bold text-slate-800">
+        <h1 className="text-2xl font-semibold tracking-tight text-slate-900">
           {t(locale, "shopsTitle")}
-        </h2>
-        <div className="grid gap-4 sm:grid-cols-2">
+        </h1>
+        <p className="mt-1 text-sm text-slate-500">
+          {locale === "ar"
+            ? "محلات شريكة مع المنصة"
+            : "Stores partnered with the platform"}
+        </p>
+        <div className="mt-5 grid gap-4 sm:grid-cols-2">
           {shops.map((shop) => (
             <article
               key={shop.img}
-              className="group overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm"
+              className="group card overflow-hidden transition hover:shadow-md"
             >
-              <div className="relative h-44 w-full">
+              <div className="relative h-48 w-full">
                 <Image
                   src={shop.img}
                   alt={locale === "ar" ? shop.titleAr : shop.titleEn}
                   fill
-                  className="object-cover transition group-hover:scale-105"
+                  className="object-cover transition duration-300 group-hover:scale-[1.02]"
                   sizes="(max-width: 768px) 100vw, 50vw"
                 />
               </div>
-              <div className="p-4">
-                <h3 className="font-semibold text-slate-800">
+              <div className="border-t border-slate-100 px-4 py-3.5">
+                <h3 className="font-medium text-slate-800">
                   {locale === "ar" ? shop.titleAr : shop.titleEn}
                 </h3>
               </div>
@@ -73,9 +64,7 @@ export default async function HomePage() {
         </div>
       </section>
 
-      <p className="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
-        {t(locale, "demoNote")}
-      </p>
+      <p className="text-center text-xs text-slate-400">{t(locale, "demoNote")}</p>
     </div>
   );
 }

@@ -28,7 +28,7 @@ export default async function ProfilePage() {
         <h1 className="text-2xl font-bold">{t(locale, "navProfile")}</h1>
         <p className="mt-2 text-lg">
           {t(locale, "balance")}:{" "}
-          <span className="font-bold text-emerald-700">
+          <span className="font-bold text-indigo-600">
             ${user.balance.toFixed(2)}
           </span>
         </p>
@@ -49,7 +49,7 @@ export default async function ProfilePage() {
             {userPlans.map((up) => (
               <li
                 key={up.id}
-                className="rounded-xl border bg-white px-4 py-3 text-sm"
+                className="card px-4 py-3 text-sm"
               >
                 {locale === "ar" ? up.plan.nameAr : up.plan.nameEn} — $
                 {up.plan.dailyProfitUsd}/{locale === "ar" ? "يوم" : "day"}
@@ -61,14 +61,14 @@ export default async function ProfilePage() {
 
       <section>
         <h2 className="mb-3 font-bold">{t(locale, "history")}</h2>
-        <ul className="divide-y rounded-xl border bg-white">
+        <ul className="card divide-y divide-slate-100">
           {transactions.map((tx) => (
             <li
               key={tx.id}
               className="flex justify-between px-4 py-2 text-sm"
             >
               <span>{tx.type}</span>
-              <span className={tx.amount >= 0 ? "text-emerald-700" : "text-red-600"}>
+              <span className={tx.amount >= 0 ? "text-indigo-600" : "text-red-500"}>
                 {tx.amount >= 0 ? "+" : ""}
                 {tx.amount.toFixed(2)}
               </span>

@@ -9,7 +9,7 @@ export function LogoutButton({ locale }: { locale: Locale }) {
   return (
     <button
       type="button"
-      className="text-sm font-medium text-emerald-700"
+      className="text-sm font-medium text-indigo-600 hover:text-indigo-800"
       onClick={async () => {
         await fetch("/api/auth/logout", { method: "POST" });
         router.refresh();

@@ -27,7 +27,7 @@ export function DepositForm({ locale }: { locale: Locale }) {
   }
 
   return (
-    <form onSubmit={submit} className="rounded-2xl border bg-white p-5 space-y-3">
+    <form onSubmit={submit} className="card space-y-3 p-5">
       <label className="block text-sm font-medium">{t(locale, "amount")}</label>
       <input
         type="number"
@@ -40,12 +40,12 @@ export function DepositForm({ locale }: { locale: Locale }) {
       />
       <button
         type="submit"
-        className="w-full rounded-xl bg-emerald-600 py-2 font-medium text-white"
+        className="w-full rounded-xl bg-indigo-600 py-2.5 font-medium text-white shadow-sm"
       >
         {t(locale, "submitDeposit")}
       </button>
       {status === "submitted" && (
-        <p className="text-sm text-emerald-700">{t(locale, "depositPending")}</p>
+        <p className="text-sm text-indigo-600">{t(locale, "depositPending")}</p>
       )}
     </form>
   );

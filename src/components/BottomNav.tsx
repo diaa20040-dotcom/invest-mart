@@ -17,7 +17,7 @@ export function BottomNav({ locale }: { locale: Locale }) {
   const pathname = usePathname();
   return (
     <nav
-      className="fixed bottom-0 left-0 right-0 z-50 border-t border-slate-200 bg-white/95 backdrop-blur md:hidden"
+      className="fixed bottom-0 left-0 right-0 z-50 border-t border-slate-200/80 bg-white/95 shadow-[0_-4px_24px_rgba(15,23,42,0.06)] backdrop-blur-md md:hidden"
       aria-label="Main"
     >
       <ul className="mx-auto flex max-w-lg justify-between px-1 py-2">
@@ -31,7 +31,7 @@ export function BottomNav({ locale }: { locale: Locale }) {
               <Link
                 href={item.href}
                 className={`flex flex-col items-center gap-0.5 rounded-lg px-1 py-1 text-[10px] font-medium ${
-                  active ? "text-emerald-700" : "text-slate-500"
+                  active ? "text-indigo-600" : "text-slate-400"
                 }`}
               >
                 <span className="text-lg leading-none">{item.icon}</span>

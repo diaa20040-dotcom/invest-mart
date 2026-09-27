@@ -34,13 +34,13 @@ export default async function ReferralsPage() {
       </div>
       <ReferralCopy locale={locale} code={user.referralCode} />
       <div className="grid gap-4 sm:grid-cols-2">
-        <div className="rounded-2xl border bg-white p-5">
+        <div className="card p-5">
           <p className="text-sm text-slate-500">{t(locale, "invitedCount")}</p>
           <p className="text-3xl font-bold">{invitedCount}</p>
         </div>
-        <div className="rounded-2xl border bg-white p-5">
+        <div className="card p-5">
           <p className="text-sm text-slate-500">{t(locale, "referralEarnings")}</p>
-          <p className="text-3xl font-bold text-emerald-700">
+          <p className="text-3xl font-bold text-indigo-600">
             ${(referralTx._sum.amount ?? 0).toFixed(2)}
           </p>
         </div>

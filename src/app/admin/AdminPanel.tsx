@@ -74,7 +74,7 @@ export function AdminPanel() {
     <div className="space-y-8 pb-8">
       <h1 className="text-2xl font-bold">Admin</h1>
 
-      <section className="rounded-2xl border bg-white p-5 space-y-3">
+      <section className="card space-y-3 p-5">
         <h2 className="font-bold">Wallets & referral %</h2>
         <label className="block text-sm">Deposit wallet</label>
         <input
@@ -98,13 +98,13 @@ export function AdminPanel() {
         <button
           type="button"
           onClick={saveSettings}
-          className="rounded-lg bg-emerald-600 px-4 py-2 text-white"
+          className="rounded-lg bg-indigo-600 px-4 py-2 text-white"
         >
           Save
         </button>
       </section>
 
-      <section className="rounded-2xl border bg-white p-5 space-y-3">
+      <section className="card space-y-3 p-5">
         <h2 className="font-bold">Plans</h2>
         <ul className="space-y-2 text-sm">
           {plans.map((p) => (

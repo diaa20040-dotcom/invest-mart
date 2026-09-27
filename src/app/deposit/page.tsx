@@ -18,7 +18,7 @@ export default async function DepositPage() {
         <h1 className="text-2xl font-bold">{t(locale, "depositTitle")}</h1>
         <p className="mt-1 text-slate-600">{t(locale, "depositSubtitle")}</p>
       </div>
-      <div className="rounded-2xl border bg-white p-5">
+      <div className="card p-5">
         <p className="text-sm font-medium text-slate-500">
           {t(locale, "depositWallet")}
         </p>

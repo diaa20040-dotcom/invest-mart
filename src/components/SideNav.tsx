@@ -29,8 +29,8 @@ export function SideNav({ locale }: { locale: Locale }) {
                 href={item.href}
                 className={`block rounded-xl px-4 py-2.5 text-sm font-medium ${
                   active
-                    ? "bg-emerald-600 text-white"
-                    : "text-slate-600 hover:bg-slate-100"
+                    ? "bg-indigo-600 text-white shadow-sm"
+                    : "text-slate-600 hover:bg-white hover:shadow-sm"
                 }`}
               >
                 {t(locale, item.key)}

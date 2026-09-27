@@ -61,6 +61,7 @@ export default async function HomePage() {
     overview = (
       <HomeOverview
         locale={locale as Locale}
+        showAdmin={canAccessAdmin(user)}
         user={{
           name: user.name,
           email: user.email,

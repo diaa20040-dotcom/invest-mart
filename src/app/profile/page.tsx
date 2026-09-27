@@ -4,6 +4,7 @@ import { t } from "@/lib/i18n";
 import Link from "next/link";
 import { getCurrentUser } from "@/lib/auth";
 import { canAccessAdmin } from "@/lib/admin";
+import { formatBalance } from "@/lib/balance";
 import { prisma } from "@/lib/prisma";
 import { ProfileActions } from "./ProfileActions";
 
@@ -31,7 +32,7 @@ export default async function ProfilePage() {
         <p className="mt-2 text-lg">
           {t(locale, "balance")}:{" "}
           <span className="font-bold text-indigo-600">
-            ${user.balance.toFixed(2)}
+            {formatBalance(user, locale)}
           </span>
         </p>
         <p className="text-sm text-slate-500">{user.email}</p>

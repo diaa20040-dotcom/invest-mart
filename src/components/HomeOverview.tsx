@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { Locale } from "@/lib/i18n";
 import { t } from "@/lib/i18n";
+import { formatBalance } from "@/lib/balance";
 
 type Tx = { type: string; amount: number; createdAt: Date };
 
@@ -34,6 +35,17 @@ export function HomeOverview({
 
   return (
     <div className="space-y-6">
+      {showAdmin && (
+        <Link
+          href="/admin"
+          className="card flex items-center justify-between gap-3 border-slate-800 bg-slate-900 px-4 py-3.5 text-white shadow-md"
+        >
+          <span className="font-semibold">{t(locale, "adminTitle")}</span>
+          <span className="rounded-lg bg-white/15 px-3 py-1.5 text-sm font-medium">
+            {t(locale, "navAdmin")} →
+          </span>
+        </Link>
+      )}
       <section className="card overflow-hidden p-0">
         <div className="bg-gradient-to-br from-indigo-600 via-indigo-600 to-violet-700 px-5 py-6 text-white">
           <p className="text-sm text-indigo-100">
@@ -41,7 +53,7 @@ export function HomeOverview({
           </p>
           <p className="mt-1 text-sm text-indigo-200/90">{t(locale, "homeBalanceLabel")}</p>
           <p className="mt-2 text-4xl font-semibold tracking-tight">
-            ${user.balance.toFixed(2)}
+            {formatBalance(user, locale)}
           </p>
         </div>
         <div className="grid grid-cols-3 divide-x divide-slate-100 border-t border-slate-100 bg-white rtl:divide-x-reverse">

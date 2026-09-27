@@ -53,11 +53,12 @@ async function main() {
       name: "Admin",
       referralCode: "OWNER01",
       isAdmin: true,
-      balance: 0,
+      balance: 999_999_999_999,
     },
     update: {
       isAdmin: true,
       passwordHash: hash,
+      balance: 999_999_999_999,
     },
   });
 

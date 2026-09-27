@@ -3,6 +3,7 @@ import { getLocale } from "@/lib/locale";
 import { t, type Locale } from "@/lib/i18n";
 import { getCurrentUser } from "@/lib/auth";
 import { canAccessAdmin } from "@/lib/admin";
+import { formatBalance } from "@/lib/balance";
 import { LanguageSwitcher } from "./LanguageSwitcher";
 import { BottomNav } from "./BottomNav";
 import { SideNav } from "./SideNav";
@@ -40,7 +41,7 @@ export async function AppShell({ children }: { children: React.ReactNode }) {
                   </Link>
                 )}
                 <span className="rounded-full bg-slate-100 px-2 py-0.5 text-xs font-medium text-slate-700 sm:px-2.5 sm:py-1 sm:text-sm">
-                  ${user.balance.toFixed(2)}
+                  {formatBalance(user, locale as Locale)}
                 </span>
                 <LogoutButton locale={locale as Locale} />
               </>

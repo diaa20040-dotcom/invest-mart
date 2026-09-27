@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import { getSessionUserId } from "@/lib/auth";
+import { hasUnlimitedBalance } from "@/lib/balance";
 
 const schema = z.object({ planId: z.string() });
 
@@ -23,27 +24,33 @@ export async function POST(req: Request) {
   }
 
   const user = await prisma.user.findUnique({ where: { id: userId } });
-  if (!user || user.balance < plan.priceUsd) {
+  if (!user) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+  const unlimited = hasUnlimitedBalance(user);
+  if (!unlimited && user.balance < plan.priceUsd) {
     return NextResponse.json({ error: "Insufficient balance" }, { status: 400 });
   }
 
-  await prisma.$transaction([
-    prisma.user.update({
-      where: { id: userId },
-      data: { balance: { decrement: plan.priceUsd } },
-    }),
-    prisma.userPlan.create({
+  await prisma.$transaction(async (tx) => {
+    if (!unlimited) {
+      await tx.user.update({
+        where: { id: userId },
+        data: { balance: { decrement: plan.priceUsd } },
+      });
+    }
+    await tx.userPlan.create({
       data: { userId, planId: plan.id },
-    }),
-    prisma.transaction.create({
+    });
+    await tx.transaction.create({
       data: {
         userId,
         type: "plan_purchase",
-        amount: -plan.priceUsd,
-        meta: JSON.stringify({ planId: plan.id }),
+        amount: unlimited ? 0 : -plan.priceUsd,
+        meta: JSON.stringify({ planId: plan.id, unlimited }),
       },
-    }),
-  ]);
+    });
+  });
 
   return NextResponse.json({ ok: true });
 }

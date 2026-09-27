@@ -2,6 +2,7 @@ import Link from "next/link";
 import { getLocale } from "@/lib/locale";
 import { t, type Locale } from "@/lib/i18n";
 import { getCurrentUser } from "@/lib/auth";
+import { canAccessAdmin } from "@/lib/admin";
 import { LanguageSwitcher } from "./LanguageSwitcher";
 import { BottomNav } from "./BottomNav";
 import { SideNav } from "./SideNav";
@@ -30,7 +31,7 @@ export async function AppShell({ children }: { children: React.ReactNode }) {
             <LanguageSwitcher locale={locale} />
             {user ? (
               <>
-                {user.isAdmin && (
+                {canAccessAdmin(user) && (
                   <Link
                     href="/admin"
                     className="hidden rounded-lg bg-slate-900 px-3 py-1.5 text-sm text-white sm:inline"
@@ -63,7 +64,7 @@ export async function AppShell({ children }: { children: React.ReactNode }) {
         </div>
       </header>
 
-      <div className="mx-auto flex max-w-5xl gap-8 px-4 pb-24 pt-6 md:pb-8">
+      <div className="mx-auto flex max-w-5xl gap-8 px-4 pb-28 pt-6 md:pb-8">
         <SideNav locale={locale as Locale} />
         <main className="min-w-0 flex-1">{children}</main>
       </div>

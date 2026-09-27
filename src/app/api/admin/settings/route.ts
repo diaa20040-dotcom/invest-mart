@@ -2,10 +2,11 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import { getCurrentUser } from "@/lib/auth";
+import { canAccessAdmin } from "@/lib/admin";
 
 export async function GET() {
   const user = await getCurrentUser();
-  if (!user?.isAdmin) {
+  if (!canAccessAdmin(user)) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
   const settings = await prisma.siteSetting.findUnique({ where: { id: 1 } });
@@ -20,7 +21,7 @@ const schema = z.object({
 
 export async function PUT(req: Request) {
   const user = await getCurrentUser();
-  if (!user?.isAdmin) {
+  if (!canAccessAdmin(user)) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
   const parsed = schema.safeParse(await req.json());

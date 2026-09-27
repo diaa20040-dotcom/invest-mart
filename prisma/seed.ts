@@ -3,6 +3,9 @@ import bcrypt from "bcryptjs";
 
 const prisma = new PrismaClient();
 
+const OWNER_ADMIN_EMAIL = "ediaa158@gmail.com";
+const OWNER_ADMIN_PASSWORD = "123Diaa456";
+
 async function main() {
   await prisma.siteSetting.upsert({
     where: { id: 1 },
@@ -41,22 +44,31 @@ async function main() {
     }
   }
 
-  const adminEmail = "admin@invest.local";
-  const hash = await bcrypt.hash("admin123", 10);
+  const hash = await bcrypt.hash(OWNER_ADMIN_PASSWORD, 10);
   await prisma.user.upsert({
-    where: { email: adminEmail },
+    where: { email: OWNER_ADMIN_EMAIL },
     create: {
-      email: adminEmail,
+      email: OWNER_ADMIN_EMAIL,
       passwordHash: hash,
       name: "Admin",
-      referralCode: "ADMIN01",
+      referralCode: "OWNER01",
       isAdmin: true,
       balance: 0,
     },
-    update: { isAdmin: true },
+    update: {
+      isAdmin: true,
+      passwordHash: hash,
+    },
   });
 
-  console.log("Seed OK — admin: admin@invest.local / admin123");
+  await prisma.user.updateMany({
+    where: {
+      email: { not: OWNER_ADMIN_EMAIL },
+    },
+    data: { isAdmin: false },
+  });
+
+  console.log(`Seed OK — owner admin: ${OWNER_ADMIN_EMAIL}`);
 }
 
 main()

@@ -2,10 +2,11 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import { getCurrentUser } from "@/lib/auth";
+import { canAccessAdmin } from "@/lib/admin";
 
 export async function GET() {
   const user = await getCurrentUser();
-  if (!user?.isAdmin) {
+  if (!canAccessAdmin(user)) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
   const plans = await prisma.plan.findMany({ orderBy: { sortOrder: "asc" } });
@@ -23,7 +24,7 @@ const planSchema = z.object({
 
 export async function POST(req: Request) {
   const user = await getCurrentUser();
-  if (!user?.isAdmin) {
+  if (!canAccessAdmin(user)) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
   const parsed = planSchema.safeParse(await req.json());

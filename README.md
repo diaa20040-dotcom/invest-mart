@@ -16,8 +16,7 @@ Open http://localhost:3000
 
 ## Admin
 
-- Email: `admin@invest.local`
-- Password: `admin123`
+- Owner admin is created via `npx prisma db seed` (see `prisma/seed.ts`).
 - `/admin` — set deposit & withdraw wallets, referral %, add/edit plans
 
 ## Test flow

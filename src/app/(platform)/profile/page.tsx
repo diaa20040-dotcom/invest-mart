@@ -8,6 +8,8 @@ import { formatBalance } from "@/lib/balance";
 import { prisma } from "@/lib/prisma";
 import { ProfileActions } from "./ProfileActions";
 import { getProfitClaimStatus } from "@/lib/daily-profit";
+import { LanguageSwitcher } from "@/components/LanguageSwitcher";
+import type { Locale } from "@/lib/i18n";
 
 export default async function ProfilePage() {
   const locale = await getLocale();
@@ -74,6 +76,14 @@ export default async function ProfilePage() {
         nextClaimAtIso={profitStatus.nextClaimAt?.toISOString() ?? null}
         hasActivePlan={profitStatus.hasActivePlan}
       />
+
+      <section className="card p-5">
+        <h2 className="font-bold">{t(locale, "languageSettings")}</h2>
+        <p className="mt-1 text-sm text-slate-500">{t(locale, "languageSettingsHint")}</p>
+        <div className="mt-4">
+          <LanguageSwitcher locale={locale as Locale} />
+        </div>
+      </section>
 
       <section>
         <h2 className="mb-3 font-bold">{t(locale, "myPlans")}</h2>

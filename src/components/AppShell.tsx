@@ -4,7 +4,6 @@ import { t, type Locale } from "@/lib/i18n";
 import { getCurrentUser } from "@/lib/auth";
 import { canAccessAdmin } from "@/lib/admin";
 import { formatBalance } from "@/lib/balance";
-import { LanguageSwitcher } from "./LanguageSwitcher";
 import { BottomNav } from "./BottomNav";
 import { SideNav } from "./SideNav";
 import { LogoutButton } from "./LogoutButton";
@@ -29,8 +28,7 @@ export async function AppShell({ children }: { children: React.ReactNode }) {
             {t(locale, "appName")}
           </Link>
           <div className="flex items-center gap-2">
-            <LanguageSwitcher locale={locale} />
-            {user ? (
+            {user && (
               <>
                 {canAccessAdmin(user) && (
                   <Link
@@ -44,21 +42,6 @@ export async function AppShell({ children }: { children: React.ReactNode }) {
                   {formatBalance(user, locale as Locale)}
                 </span>
                 <LogoutButton locale={locale as Locale} />
-              </>
-            ) : (
-              <>
-                <Link
-                  href="/login"
-                  className="text-sm font-medium text-slate-600 hover:text-slate-900"
-                >
-                  {t(locale, "login")}
-                </Link>
-                <Link
-                  href="/register"
-                  className="rounded-lg bg-indigo-600 px-3 py-1.5 text-sm font-medium text-white shadow-sm hover:bg-indigo-700"
-                >
-                  {t(locale, "register")}
-                </Link>
               </>
             )}
           </div>

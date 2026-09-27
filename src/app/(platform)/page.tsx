@@ -2,10 +2,11 @@ import Image from "next/image";
 import Link from "next/link";
 import { getLocale } from "@/lib/locale";
 import { t, type Locale } from "@/lib/i18n";
+import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/lib/auth";
 import { canAccessAdmin } from "@/lib/admin";
 import { prisma } from "@/lib/prisma";
-import { HomeGuest, HomeOverview } from "@/components/HomeOverview";
+import { HomeOverview } from "@/components/HomeOverview";
 
 const shops = [
   {
@@ -33,10 +34,9 @@ const shops = [
 export default async function HomePage() {
   const locale = await getLocale();
   const user = await getCurrentUser();
+  if (!user) redirect("/login");
 
-  let overview = null;
-  if (user) {
-    const userPlans = await prisma.userPlan.findMany({
+  const userPlans = await prisma.userPlan.findMany({
       where: { userId: user.id },
       include: { plan: true },
     });
@@ -58,28 +58,27 @@ export default async function HomePage() {
       take: 5,
     });
 
-    overview = (
-      <HomeOverview
-        locale={locale as Locale}
-        showAdmin={canAccessAdmin(user)}
-        user={{
-          name: user.name,
-          email: user.email,
-          balance: user.balance,
-          referralCode: user.referralCode,
-        }}
-        activePlansCount={activePlansCount}
-        dailyProfitUsd={dailyProfitUsd}
-        referralEarnings={referralAgg._sum.amount ?? 0}
-        invitedCount={invitedCount}
-        recentTx={recentTx}
-      />
-    );
-  }
+  const overview = (
+    <HomeOverview
+      locale={locale as Locale}
+      showAdmin={canAccessAdmin(user)}
+      user={{
+        name: user.name,
+        email: user.email,
+        balance: user.balance,
+        referralCode: user.referralCode,
+      }}
+      activePlansCount={activePlansCount}
+      dailyProfitUsd={dailyProfitUsd}
+      referralEarnings={referralAgg._sum.amount ?? 0}
+      invitedCount={invitedCount}
+      recentTx={recentTx}
+    />
+  );
 
   return (
     <div className="space-y-8">
-      {user ? overview : <HomeGuest locale={locale as Locale} />}
+      {overview}
 
       <section>
         <div className="mb-4 flex items-end justify-between gap-4">
@@ -89,14 +88,12 @@ export default async function HomePage() {
             </h2>
             <p className="text-sm text-slate-500">{t(locale, "homeShopsHint")}</p>
           </div>
-          {user && (
-            <Link
-              href="/plans"
-              className="shrink-0 text-sm font-medium text-indigo-600 hover:text-indigo-800"
-            >
-              {t(locale, "heroCta")}
-            </Link>
-          )}
+          <Link
+            href="/plans"
+            className="shrink-0 text-sm font-medium text-indigo-600 hover:text-indigo-800"
+          >
+            {t(locale, "heroCta")}
+          </Link>
         </div>
         <div className="grid gap-4 sm:grid-cols-2">
           {shops.map((shop) => (

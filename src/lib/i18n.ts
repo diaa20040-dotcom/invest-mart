@@ -74,6 +74,17 @@ export const translations = {
     homeGuestSubtitle:
       "Sign in to see your balance, subscriptions, referrals, and deposits in one place.",
     homeShopsHint: "Partner stores on the platform",
+    authTagline: "Your partner investment platform",
+    authLoginTitle: "Welcome back",
+    authLoginSubtitle: "Sign in to manage balance, plans, and referrals.",
+    authRegisterTitle: "Create your account",
+    authRegisterSubtitle: "Join in minutes and start investing with partner stores.",
+    loginFailed: "Wrong email or password",
+    registerFailed: "Could not create account",
+    alreadyHaveAccount: "Already have an account?",
+    noAccountYet: "Don't have an account?",
+    languageSettings: "Language",
+    languageSettingsHint: "Choose your preferred interface language.",
   },
   ar: {
     appName: "إنفست مارت",
@@ -148,6 +159,17 @@ export const translations = {
     homeGuestSubtitle:
       "سجّل الدخول لمتابعة الرصيد والاشتراكات والإحالات والإيداع من مكان واحد.",
     homeShopsHint: "محلات شريكة على المنصة",
+    authTagline: "منصتك للاستثمار مع الشركاء",
+    authLoginTitle: "مرحباً بعودتك",
+    authLoginSubtitle: "سجّل الدخول لإدارة الرصيد والاشتراكات والإحالات.",
+    authRegisterTitle: "إنشاء حساب جديد",
+    authRegisterSubtitle: "انضم في دقائق وابدأ الاستثمار مع المحلات الشريكة.",
+    loginFailed: "البريد أو كلمة المرور غير صحيحة",
+    registerFailed: "تعذّر إنشاء الحساب",
+    alreadyHaveAccount: "لديك حساب بالفعل؟",
+    noAccountYet: "ليس لديك حساب؟",
+    languageSettings: "اللغة",
+    languageSettingsHint: "اختر لغة واجهة المنصة.",
   },
 } as const;
 

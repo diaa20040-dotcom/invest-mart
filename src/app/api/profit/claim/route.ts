@@ -1,14 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getSessionUserId } from "@/lib/auth";
-
-function isSameUtcDay(a: Date, b: Date) {
-  return (
-    a.getUTCFullYear() === b.getUTCFullYear() &&
-    a.getUTCMonth() === b.getUTCMonth() &&
-    a.getUTCDate() === b.getUTCDate()
-  );
-}
+import { canClaimPlan, getProfitClaimStatus } from "@/lib/daily-profit";
 
 export async function POST() {
   const userId = await getSessionUserId();
@@ -26,13 +19,26 @@ export async function POST() {
 
   for (const up of activePlans) {
     if (!up.plan.active) continue;
-    if (up.lastClaimedAt && isSameUtcDay(up.lastClaimedAt, now)) continue;
+    if (!canClaimPlan(up.lastClaimedAt, now)) continue;
     total += up.plan.dailyProfitUsd;
   }
 
   if (total <= 0) {
+    const status = getProfitClaimStatus(
+      activePlans.map((up) => ({
+        active: up.plan.active,
+        dailyProfitUsd: up.plan.dailyProfitUsd,
+        lastClaimedAt: up.lastClaimedAt,
+      })),
+      now
+    );
     return NextResponse.json(
-      { error: "already_claimed_or_no_plan" },
+      {
+        error: status.hasActivePlan
+          ? "cooldown_active"
+          : "already_claimed_or_no_plan",
+        nextClaimAt: status.nextClaimAt?.toISOString() ?? null,
+      },
       { status: 400 }
     );
   }
@@ -40,7 +46,7 @@ export async function POST() {
   await prisma.$transaction(async (tx) => {
     for (const up of activePlans) {
       if (!up.plan.active) continue;
-      if (up.lastClaimedAt && isSameUtcDay(up.lastClaimedAt, now)) continue;
+      if (!canClaimPlan(up.lastClaimedAt, now)) continue;
       await tx.userPlan.update({
         where: { id: up.id },
         data: { lastClaimedAt: now },

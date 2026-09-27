@@ -7,6 +7,7 @@ import { canAccessAdmin } from "@/lib/admin";
 import { formatBalance } from "@/lib/balance";
 import { prisma } from "@/lib/prisma";
 import { ProfileActions } from "./ProfileActions";
+import { getProfitClaimStatus } from "@/lib/daily-profit";
 
 export default async function ProfilePage() {
   const locale = await getLocale();
@@ -24,6 +25,14 @@ export default async function ProfilePage() {
     orderBy: { createdAt: "desc" },
     take: 15,
   });
+
+  const profitStatus = getProfitClaimStatus(
+    userPlans.map((up) => ({
+      active: up.plan.active,
+      dailyProfitUsd: up.plan.dailyProfitUsd,
+      lastClaimedAt: up.lastClaimedAt,
+    }))
+  );
 
   return (
     <div className="space-y-8">
@@ -60,6 +69,10 @@ export default async function ProfilePage() {
       <ProfileActions
         locale={locale}
         payoutWallet={settings?.withdrawWallet ?? ""}
+        canClaim={profitStatus.canClaim}
+        claimableAmount={profitStatus.claimableTotal}
+        nextClaimAtIso={profitStatus.nextClaimAt?.toISOString() ?? null}
+        hasActivePlan={profitStatus.hasActivePlan}
       />
 
       <section>

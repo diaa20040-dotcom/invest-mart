@@ -1,7 +1,9 @@
 import { redirect } from "next/navigation";
 import { getLocale } from "@/lib/locale";
 import { t } from "@/lib/i18n";
+import Link from "next/link";
 import { getCurrentUser } from "@/lib/auth";
+import { canAccessAdmin } from "@/lib/admin";
 import { prisma } from "@/lib/prisma";
 import { ProfileActions } from "./ProfileActions";
 
@@ -34,6 +36,25 @@ export default async function ProfilePage() {
         </p>
         <p className="text-sm text-slate-500">{user.email}</p>
       </div>
+
+      {canAccessAdmin(user) && (
+        <Link
+          href="/admin"
+          className="card flex items-center justify-between gap-3 border-indigo-200 bg-indigo-50/80 px-4 py-4 transition hover:border-indigo-300 hover:shadow-md"
+        >
+          <div>
+            <p className="font-semibold text-slate-900">{t(locale, "adminTitle")}</p>
+            <p className="text-sm text-slate-600">
+              {locale === "ar"
+                ? "إدارة الخطط والمحافظ والإيداعات"
+                : "Manage plans, wallets, and deposits"}
+            </p>
+          </div>
+          <span className="rounded-xl bg-indigo-600 px-3 py-2 text-sm font-medium text-white">
+            {t(locale, "navAdmin")}
+          </span>
+        </Link>
+      )}
 
       <ProfileActions
         locale={locale}

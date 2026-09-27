@@ -8,6 +8,7 @@ export const translations = {
     navReferrals: "Referrals",
     navDeposit: "Deposit",
     navProfile: "Profile",
+    navAdmin: "Admin",
     heroTitle: "Grow with trusted local partners",
     heroSubtitle:
       "Browse partner stores, pick a plan, and track daily returns from your dashboard.",
@@ -78,6 +79,7 @@ export const translations = {
     navReferrals: "الإحالات",
     navDeposit: "الإيداع",
     navProfile: "الحساب",
+    navAdmin: "الأدمن",
     heroTitle: "استثمر مع شركاء محليين موثوقين",
     heroSubtitle:
       "تصفح المحلات الشريكة، اختر خطة، وتابع الأرباح اليومية من لوحة حسابك.",

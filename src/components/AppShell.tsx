@@ -34,12 +34,12 @@ export async function AppShell({ children }: { children: React.ReactNode }) {
                 {canAccessAdmin(user) && (
                   <Link
                     href="/admin"
-                    className="hidden rounded-lg bg-slate-900 px-3 py-1.5 text-sm text-white sm:inline"
+                    className="rounded-lg bg-slate-900 px-2.5 py-1.5 text-xs font-semibold text-white sm:px-3 sm:text-sm"
                   >
-                    Admin
+                    {t(locale, "navAdmin")}
                   </Link>
                 )}
-                <span className="hidden rounded-full bg-slate-100 px-2.5 py-1 text-sm font-medium text-slate-700 sm:inline">
+                <span className="rounded-full bg-slate-100 px-2 py-0.5 text-xs font-medium text-slate-700 sm:px-2.5 sm:py-1 sm:text-sm">
                   ${user.balance.toFixed(2)}
                 </span>
                 <LogoutButton locale={locale as Locale} />

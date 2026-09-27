@@ -6,6 +6,7 @@ type Tx = { type: string; amount: number; createdAt: Date };
 
 export function HomeOverview({
   locale,
+  showAdmin,
   user,
   activePlansCount,
   dailyProfitUsd,
@@ -14,6 +15,7 @@ export function HomeOverview({
   recentTx,
 }: {
   locale: Locale;
+  showAdmin?: boolean;
   user: { name: string | null; email: string; balance: number; referralCode: string };
   activePlansCount: number;
   dailyProfitUsd: number;

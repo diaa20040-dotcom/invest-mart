@@ -3,6 +3,7 @@ import Link from "next/link";
 import { getLocale } from "@/lib/locale";
 import { t, type Locale } from "@/lib/i18n";
 import { getCurrentUser } from "@/lib/auth";
+import { canAccessAdmin } from "@/lib/admin";
 import { prisma } from "@/lib/prisma";
 import { HomeGuest, HomeOverview } from "@/components/HomeOverview";
 

@@ -162,9 +162,6 @@ export function AdminPanel() {
         </button>
       </section>
 
-      <p className="text-sm text-slate-500">
-        Demo admin: admin@invest.local / admin123 — deposits auto-approve for users.
-      </p>
     </div>
   );
 }

@@ -8,8 +8,8 @@ async function main() {
     where: { id: 1 },
     create: {
       id: 1,
-      depositWallet: "TXyzDemoDepositWalletReplaceInAdmin",
-      withdrawWallet: "TXyzDemoPayoutWalletReplaceInAdmin",
+      depositWallet: "YOUR_DEPOSIT_WALLET_ADDRESS",
+      withdrawWallet: "YOUR_PAYOUT_WALLET_ADDRESS",
       referralPercent: 10,
     },
     update: {},

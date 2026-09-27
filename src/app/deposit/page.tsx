@@ -27,7 +27,6 @@ export default async function DepositPage() {
         </p>
       </div>
       <DepositForm locale={locale} />
-      <p className="text-sm text-slate-500">{t(locale, "depositPending")}</p>
     </div>
   );
 }

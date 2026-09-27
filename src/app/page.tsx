@@ -1,6 +1,10 @@
 import Image from "next/image";
+import Link from "next/link";
 import { getLocale } from "@/lib/locale";
-import { t } from "@/lib/i18n";
+import { t, type Locale } from "@/lib/i18n";
+import { getCurrentUser } from "@/lib/auth";
+import { prisma } from "@/lib/prisma";
+import { HomeGuest, HomeOverview } from "@/components/HomeOverview";
 
 const shops = [
   {
@@ -27,25 +31,78 @@ const shops = [
 
 export default async function HomePage() {
   const locale = await getLocale();
+  const user = await getCurrentUser();
+
+  let overview = null;
+  if (user) {
+    const userPlans = await prisma.userPlan.findMany({
+      where: { userId: user.id },
+      include: { plan: true },
+    });
+    const activePlansCount = userPlans.filter((up) => up.plan.active).length;
+    const dailyProfitUsd = userPlans
+      .filter((up) => up.plan.active)
+      .reduce((sum, up) => sum + up.plan.dailyProfitUsd, 0);
+
+    const referralAgg = await prisma.transaction.aggregate({
+      where: { userId: user.id, type: "referral" },
+      _sum: { amount: true },
+    });
+    const invitedCount = await prisma.user.count({
+      where: { referredById: user.id },
+    });
+    const recentTx = await prisma.transaction.findMany({
+      where: { userId: user.id },
+      orderBy: { createdAt: "desc" },
+      take: 5,
+    });
+
+    overview = (
+      <HomeOverview
+        locale={locale as Locale}
+        user={{
+          name: user.name,
+          email: user.email,
+          balance: user.balance,
+          referralCode: user.referralCode,
+        }}
+        activePlansCount={activePlansCount}
+        dailyProfitUsd={dailyProfitUsd}
+        referralEarnings={referralAgg._sum.amount ?? 0}
+        invitedCount={invitedCount}
+        recentTx={recentTx}
+      />
+    );
+  }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
+      {user ? overview : <HomeGuest locale={locale as Locale} />}
+
       <section>
-        <h1 className="text-2xl font-semibold tracking-tight text-slate-900">
-          {t(locale, "shopsTitle")}
-        </h1>
-        <p className="mt-1 text-sm text-slate-500">
-          {locale === "ar"
-            ? "محلات شريكة مع المنصة"
-            : "Stores partnered with the platform"}
-        </p>
-        <div className="mt-5 grid gap-4 sm:grid-cols-2">
+        <div className="mb-4 flex items-end justify-between gap-4">
+          <div>
+            <h2 className="text-lg font-semibold text-slate-900">
+              {t(locale, "shopsTitle")}
+            </h2>
+            <p className="text-sm text-slate-500">{t(locale, "homeShopsHint")}</p>
+          </div>
+          {user && (
+            <Link
+              href="/plans"
+              className="shrink-0 text-sm font-medium text-indigo-600 hover:text-indigo-800"
+            >
+              {t(locale, "heroCta")}
+            </Link>
+          )}
+        </div>
+        <div className="grid gap-4 sm:grid-cols-2">
           {shops.map((shop) => (
             <article
               key={shop.img}
               className="group card overflow-hidden transition hover:shadow-md"
             >
-              <div className="relative h-48 w-full">
+              <div className="relative h-44 w-full">
                 <Image
                   src={shop.img}
                   alt={locale === "ar" ? shop.titleAr : shop.titleEn}
@@ -54,7 +111,7 @@ export default async function HomePage() {
                   sizes="(max-width: 768px) 100vw, 50vw"
                 />
               </div>
-              <div className="border-t border-slate-100 px-4 py-3.5">
+              <div className="border-t border-slate-100 px-4 py-3">
                 <h3 className="font-medium text-slate-800">
                   {locale === "ar" ? shop.titleAr : shop.titleEn}
                 </h3>
@@ -63,8 +120,6 @@ export default async function HomePage() {
           ))}
         </div>
       </section>
-
-      <p className="text-center text-xs text-slate-400">{t(locale, "demoNote")}</p>
     </div>
   );
 }

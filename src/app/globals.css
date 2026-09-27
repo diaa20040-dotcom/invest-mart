@@ -12,6 +12,12 @@
 body {
   color: var(--foreground);
   background: var(--background);
+  font-family: var(--font-geist-sans), var(--font-arabic), system-ui, sans-serif;
+}
+
+[dir="rtl"] body,
+[dir="rtl"] {
+  font-family: var(--font-arabic), var(--font-geist-sans), system-ui, sans-serif;
 }
 
 @layer utilities {

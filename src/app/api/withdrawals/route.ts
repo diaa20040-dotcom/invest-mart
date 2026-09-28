@@ -3,9 +3,10 @@ import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import { getSessionUserId } from "@/lib/auth";
 import { hasUnlimitedBalance } from "@/lib/balance";
+import { MIN_WITHDRAWAL_USD } from "@/lib/platform-rules";
 
 const schema = z.object({
-  amount: z.number().positive(),
+  amount: z.number().min(MIN_WITHDRAWAL_USD),
   walletAddress: z.string().min(8),
 });
 
@@ -16,7 +17,10 @@ export async function POST(req: Request) {
   }
   const parsed = schema.safeParse(await req.json());
   if (!parsed.success) {
-    return NextResponse.json({ error: "Invalid input" }, { status: 400 });
+    return NextResponse.json(
+      { error: "min_withdrawal", min: MIN_WITHDRAWAL_USD },
+      { status: 400 }
+    );
   }
 
   const user = await prisma.user.findUnique({ where: { id: userId } });

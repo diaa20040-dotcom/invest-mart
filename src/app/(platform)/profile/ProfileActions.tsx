@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import type { Locale } from "@/lib/i18n";
 import { t } from "@/lib/i18n";
 import { formatCountdown } from "@/lib/daily-profit";
+import { MIN_WITHDRAWAL_USD } from "@/lib/platform-rules";
 
 export function ProfileActions({
   locale,
@@ -87,7 +88,12 @@ export function ProfileActions({
       }),
     });
     if (!res.ok) {
-      setMsg("Error");
+      const err = await res.json().catch(() => ({}));
+      if (err.error === "min_withdrawal") {
+        setMsg(t(locale, "withdrawMinHint"));
+      } else {
+        setMsg(t(locale, "insufficientBalance"));
+      }
       return;
     }
     setAmount("");
@@ -140,13 +146,14 @@ export function ProfileActions({
       <div className="card p-5">
         <h2 className="font-bold">{t(locale, "withdrawTitle")}</h2>
         <p className="mt-1 text-xs text-slate-500">{t(locale, "withdrawWalletHint")}</p>
+        <p className="mt-1 text-xs font-medium text-slate-600">{t(locale, "withdrawMinHint")}</p>
         <p className="mt-2 break-all rounded bg-slate-100 p-2 font-mono text-xs">
           {payoutWallet}
         </p>
         <form onSubmit={withdraw} className="mt-3 space-y-2">
           <input
             type="number"
-            min="1"
+            min={MIN_WITHDRAWAL_USD}
             step="0.01"
             required
             placeholder={t(locale, "amount")}

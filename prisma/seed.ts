@@ -20,6 +20,13 @@ async function main() {
 
   const plans = [
     {
+      nameEn: "Free Trial",
+      nameAr: "الخطة المجانية",
+      priceUsd: 1,
+      dailyProfitUsd: 0.5,
+      sortOrder: 0,
+    },
+    {
       nameEn: "Starter Shop",
       nameAr: "محل البداية",
       priceUsd: 9,

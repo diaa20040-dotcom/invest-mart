@@ -6,6 +6,7 @@ import {
   generateUniqueReferralCode,
   hashPassword,
 } from "@/lib/auth";
+import { SIGNUP_BONUS_USD } from "@/lib/platform-rules";
 
 const schema = z.object({
   email: z.string().email(),
@@ -34,14 +35,25 @@ export async function POST(req: Request) {
     if (referrer) referredById = referrer.id;
   }
 
-  const user = await prisma.user.create({
-    data: {
-      email,
-      passwordHash: await hashPassword(password),
-      name: name || null,
-      referralCode: await generateUniqueReferralCode(),
-      referredById,
-    },
+  const user = await prisma.$transaction(async (tx) => {
+    const created = await tx.user.create({
+      data: {
+        email,
+        passwordHash: await hashPassword(password),
+        name: name || null,
+        referralCode: await generateUniqueReferralCode(),
+        referredById,
+        balance: SIGNUP_BONUS_USD,
+      },
+    });
+    await tx.transaction.create({
+      data: {
+        userId: created.id,
+        type: "signup_bonus",
+        amount: SIGNUP_BONUS_USD,
+      },
+    });
+    return created;
   });
 
   await createSession(user.id);

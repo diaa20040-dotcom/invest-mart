@@ -55,7 +55,7 @@ npm run db:production:setup
 4. **Settings → General** (مهم):
    - **Root Directory**: فارغ أو `.` (لا تضع `invest-platform` إلا إذا كان المستودع أبواً ومجلد المشروع داخله).
    - **Node.js Version**: 20.x أو 22.x.
-   - **Build Command**: اتركه افتراضياً أو `npm run build` (موجود في `vercel.json`).
+   - **Build & Development Settings**: اترك **Install / Build / Output** فارغة (Override = Off) ليستخدم Vercel إعدادات المشروع من `package.json` فقط.
 5. **Environment Variables** (لـ Production و Preview):
 
 | المتغير | القيمة |

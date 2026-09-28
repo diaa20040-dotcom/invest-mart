@@ -1,9 +1,9 @@
-import { createClient } from "@libsql/client";
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { cleanEnv, createTursoClient, resolveTursoUrl } from "@/lib/turso-client";
 
 function envMeta() {
-  const databaseUrl = process.env.DATABASE_URL ?? "";
+  const databaseUrl = cleanEnv(process.env.DATABASE_URL);
   return {
     urlType: databaseUrl.startsWith("libsql:")
       ? "libsql"
@@ -12,19 +12,27 @@ function envMeta() {
         : databaseUrl
           ? "other"
           : "missing",
-    hasTursoToken: Boolean(process.env.TURSO_AUTH_TOKEN?.trim()),
+    hasTursoToken: Boolean(cleanEnv(process.env.TURSO_AUTH_TOKEN)),
+    tursoHost: (() => {
+      try {
+        const u = resolveTursoUrl();
+        return u ? new URL(u.replace(/^libsql:/, "https:")).hostname : null;
+      } catch {
+        return null;
+      }
+    })(),
     hasJwtSecret: Boolean(process.env.JWT_SECRET?.trim()),
     bootstrapConfigured: Boolean(process.env.SETUP_SECRET?.trim()),
   };
 }
 
 async function tursoChecks() {
-  const url = process.env.DATABASE_URL ?? "";
-  const authToken = process.env.TURSO_AUTH_TOKEN?.trim();
+  const url = resolveTursoUrl();
+  const authToken = cleanEnv(process.env.TURSO_AUTH_TOKEN);
   if (!url.startsWith("libsql:") || !authToken) {
     return { libsqlReachable: false, userTable: false };
   }
-  const client = createClient({ url, authToken });
+  const client = createTursoClient();
   try {
     await client.execute("SELECT 1");
   } catch {

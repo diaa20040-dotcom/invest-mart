@@ -5,6 +5,7 @@ const nextConfig: NextConfig = {
     "@prisma/client",
     "@prisma/adapter-libsql",
     "@libsql/client",
+    "@libsql/client/web",
   ],
   eslint: {
     ignoreDuringBuilds: true,

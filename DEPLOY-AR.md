@@ -66,6 +66,10 @@ npm run db:production:setup
 
 6. **Deploy** وانتظر حتى يصبح Build أخضر.
 
+**مهم — لا تعتمد على Redeploy للنشر الفاشل القديم:**  
+من **Deployments** → **Create Deployment** → اختر فرع **`main`** → Deploy.  
+في اللوج يجب أن ترى **Next.js 15.1.12** (وليس 15.1.0). إن ظهر 15.1.0 فأنت تبني commit قديم — استخدم Create Deployment من `main` مع **Clear cache**.
+
 > بعد كل push على `main` يمكنك التأكد من GitHub: تبويب **Actions** — workflow **CI** يجب أن يكون أخضر. إن كان أخضر هناك وفاشل على Vercel فالمشكلة من إعدادات Vercel أو متغيرات البيئة وليس من الكود.
 
 الرابط المجاني يكون مثل: **`invest-mart.vercel.app`** (يمكن تغيير اسم المشروع من Settings → General → Project Name).

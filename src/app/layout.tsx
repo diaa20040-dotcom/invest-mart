@@ -22,6 +22,10 @@ const notoArabic = Noto_Sans_Arabic({
 export const metadata: Metadata = {
   title: "InvestMart",
   description: "InvestMart — investment platform EN / AR",
+  icons: {
+    icon: "/images/logo.png",
+    apple: "/images/logo.png",
+  },
 };
 
 export default async function RootLayout({

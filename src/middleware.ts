@@ -14,7 +14,8 @@ function isPublicApi(pathname: string) {
     pathname === "/api/auth/login" ||
     pathname === "/api/auth/register" ||
     pathname === "/api/health/db" ||
-    pathname === "/api/setup/bootstrap"
+    pathname === "/api/setup/bootstrap" ||
+    pathname === "/api/locale"
   );
 }
 

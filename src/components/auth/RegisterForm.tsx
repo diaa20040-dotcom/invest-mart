@@ -2,8 +2,8 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import Image from "next/image";
 import Link from "next/link";
+import { BrandLogo } from "@/components/BrandLogo";
 import type { Locale } from "@/lib/i18n";
 import { t } from "@/lib/i18n";
 
@@ -50,20 +50,10 @@ export function RegisterForm({ locale }: { locale: Locale }) {
 
   return (
     <div className="w-full max-w-md">
-      <div className="relative mx-auto mb-6 aspect-[16/9] w-full max-w-sm overflow-hidden rounded-2xl border border-white/10 shadow-2xl">
-        <Image
-          src="/images/platform-hero.png"
-          alt={t(locale, "appName")}
-          fill
-          className="object-cover"
-          sizes="400px"
-          priority
-        />
+      <div className="mb-6">
+        <BrandLogo locale={locale} variant="auth" href="/" />
       </div>
       <div className="mb-8 text-center">
-        <p className="text-sm font-medium tracking-wide text-indigo-300">
-          {t(locale, "appName")}
-        </p>
         <h1 className="mt-2 text-3xl font-semibold tracking-tight">
           {t(locale, "authRegisterTitle")}
         </h1>

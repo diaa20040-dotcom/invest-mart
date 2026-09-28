@@ -150,13 +150,13 @@ export function HomeOverview({
 export function HomeGuest({ locale }: { locale: Locale }) {
   return (
     <section className="card overflow-hidden p-0">
-      <div className="relative aspect-[16/9] w-full bg-slate-900">
+      <div className="flex items-center justify-center bg-slate-950 px-6 py-10">
         <Image
-          src="/images/platform-hero.png"
+          src="/images/logo.png"
           alt={t(locale, "appName")}
-          fill
-          className="object-cover"
-          sizes="(max-width: 768px) 100vw, 640px"
+          width={280}
+          height={280}
+          className="h-auto w-full max-w-[280px] object-contain"
           priority
         />
       </div>

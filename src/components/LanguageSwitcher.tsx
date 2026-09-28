@@ -22,11 +22,13 @@ export function LanguageSwitcher({
       type="button"
       title={locale === "ar" ? "English" : "العربية"}
       onClick={async () => {
-        await fetch("/api/locale", {
+        const res = await fetch("/api/locale", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ locale: next }),
+          credentials: "same-origin",
         });
+        if (!res.ok) return;
         router.refresh();
       }}
       className={className}

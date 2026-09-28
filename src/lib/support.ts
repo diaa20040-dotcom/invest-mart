@@ -11,6 +11,8 @@ export function normalizeTelegramUrl(raw: string): string {
   return `https://t.me/${t.replace(/^\/+/, "")}`;
 }
 
+export const DEFAULT_SUPPORT_TELEGRAM = "https://t.me/Invest_Mart_support";
+
 export function supportTelegramFromEnv(): string {
   return normalizeTelegramUrl(process.env.NEXT_PUBLIC_SUPPORT_TELEGRAM_URL ?? "");
 }
@@ -26,5 +28,5 @@ export async function resolveSupportTelegramUrl(): Promise<string> {
   } catch {
     /* db unavailable */
   }
-  return "";
+  return DEFAULT_SUPPORT_TELEGRAM;
 }

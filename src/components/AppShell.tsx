@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { BrandLogo } from "./BrandLogo";
 import { getLocale } from "@/lib/locale";
 import { t, type Locale } from "@/lib/i18n";
 import { getCurrentUser } from "@/lib/auth";
@@ -22,12 +23,7 @@ export async function AppShell({ children }: { children: React.ReactNode }) {
     >
       <header className="sticky top-0 z-40 border-b border-slate-200/80 bg-white/95 backdrop-blur-md">
         <div className="mx-auto flex max-w-5xl items-center justify-between gap-4 px-4 py-3.5">
-          <Link
-            href="/"
-            className="text-lg font-semibold tracking-tight text-slate-900"
-          >
-            {t(locale, "appName")}
-          </Link>
+          <BrandLogo locale={locale as Locale} variant="header" />
           <div className="flex items-center gap-2">
             <LocaleSupportBar variant="default" />
             {user && (

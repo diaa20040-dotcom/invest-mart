@@ -7,7 +7,7 @@ import { canAccessAdmin } from "@/lib/admin";
 const planSchema = z.object({
   nameEn: z.string().min(1).optional(),
   nameAr: z.string().min(1).optional(),
-  priceUsd: z.number().positive().optional(),
+  priceUsd: z.number().nonnegative().optional(),
   dailyProfitUsd: z.number().nonnegative().optional(),
   active: z.boolean().optional(),
   sortOrder: z.number().optional(),
@@ -39,6 +39,18 @@ export async function DELETE(
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
   const { id } = await params;
+  const subs = await prisma.userPlan.count({ where: { planId: id } });
+  if (subs > 0) {
+    await prisma.plan.update({
+      where: { id },
+      data: { active: false },
+    });
+    return NextResponse.json({
+      ok: true,
+      deactivated: true,
+      message: "Plan has active subscriptions; marked inactive instead of deleted.",
+    });
+  }
   await prisma.plan.delete({ where: { id } });
-  return NextResponse.json({ ok: true });
+  return NextResponse.json({ ok: true, deactivated: false });
 }

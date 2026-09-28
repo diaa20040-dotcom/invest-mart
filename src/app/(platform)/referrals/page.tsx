@@ -10,9 +10,12 @@ export default async function ReferralsPage() {
   const user = await getCurrentUser();
   if (!user) redirect("/login");
 
-  const invitedCount = await prisma.user.count({
+  const invitees = await prisma.user.findMany({
     where: { referredById: user.id },
+    orderBy: { createdAt: "desc" },
+    select: { email: true, createdAt: true, name: true },
   });
+  const invitedCount = invitees.length;
 
   const referralTx = await prisma.transaction.aggregate({
     where: { userId: user.id, type: "referral" },
@@ -45,6 +48,24 @@ export default async function ReferralsPage() {
           </p>
         </div>
       </div>
+
+      <section className="card p-5">
+        <h2 className="font-bold">{t(locale, "invitedPeople")}</h2>
+        {invitees.length === 0 ? (
+          <p className="mt-2 text-sm text-slate-500">{t(locale, "noInviteesYet")}</p>
+        ) : (
+          <ul className="mt-3 divide-y text-sm">
+            {invitees.map((inv) => (
+              <li key={inv.email} className="flex flex-wrap justify-between gap-2 py-2">
+                <span className="font-medium">{inv.email}</span>
+                <span className="text-slate-500">
+                  {inv.createdAt.toLocaleDateString(locale === "ar" ? "ar-EG" : "en-US")}
+                </span>
+              </li>
+            ))}
+          </ul>
+        )}
+      </section>
     </div>
   );
 }

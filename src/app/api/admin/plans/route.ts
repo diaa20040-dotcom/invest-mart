@@ -16,7 +16,7 @@ export async function GET() {
 const planSchema = z.object({
   nameEn: z.string().min(1),
   nameAr: z.string().min(1),
-  priceUsd: z.number().positive(),
+  priceUsd: z.number().nonnegative(),
   dailyProfitUsd: z.number().nonnegative(),
   active: z.boolean().optional(),
   sortOrder: z.number().optional(),

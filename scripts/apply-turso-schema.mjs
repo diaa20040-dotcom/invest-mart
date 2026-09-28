@@ -2,7 +2,6 @@
  * Apply Prisma schema to Turso (Prisma CLI sqlite provider only accepts file: URLs).
  * Usage: DATABASE_URL=libsql://... TURSO_AUTH_TOKEN=... node scripts/apply-turso-schema.mjs
  */
-import { createClient } from "@libsql/client";
 import { execSync } from "node:child_process";
 import fs from "node:fs";
 import os from "node:os";
@@ -11,12 +10,21 @@ import { fileURLToPath } from "node:url";
 
 const projectRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 
-const url = process.env.DATABASE_URL;
-const authToken = process.env.TURSO_AUTH_TOKEN;
+const url = process.env.DATABASE_URL?.trim();
+const authToken = process.env.TURSO_AUTH_TOKEN?.trim();
 if (!url?.startsWith("libsql:") || !authToken) {
   console.error("Set DATABASE_URL (libsql://) and TURSO_AUTH_TOKEN");
   process.exit(1);
 }
+
+const httpUrl = url.startsWith("libsql://")
+  ? `https://${url.slice("libsql://".length)}`
+  : url;
+
+const { createClient } =
+  process.env.VERCEL === "1"
+    ? await import("@libsql/client/web")
+    : await import("@libsql/client");
 
 const tmpSql = path.join(os.tmpdir(), "invest-mart-schema.sql");
 execSync(
@@ -25,6 +33,9 @@ execSync(
 );
 
 const sql = fs.readFileSync(tmpSql, "utf8");
-const client = createClient({ url, authToken });
+const client = createClient({
+  url: process.env.VERCEL === "1" ? httpUrl : url,
+  authToken,
+});
 await client.executeMultiple(sql);
 console.log("Turso schema applied.");

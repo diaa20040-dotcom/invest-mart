@@ -7,6 +7,7 @@ import { formatBalance } from "@/lib/balance";
 import { BottomNav } from "./BottomNav";
 import { SideNav } from "./SideNav";
 import { LogoutButton } from "./LogoutButton";
+import { LocaleSupportBar } from "./LocaleSupportBar";
 
 export async function AppShell({ children }: { children: React.ReactNode }) {
   const locale = await getLocale();
@@ -28,6 +29,7 @@ export async function AppShell({ children }: { children: React.ReactNode }) {
             {t(locale, "appName")}
           </Link>
           <div className="flex items-center gap-2">
+            <LocaleSupportBar variant="default" />
             {user && (
               <>
                 {canAccessAdmin(user) && (

@@ -61,6 +61,7 @@ export function AdminPanel() {
   const [depositWalletTrc20, setDepositWalletTrc20] = useState("");
   const [withdrawWallet, setWithdrawWallet] = useState("");
   const [referralPercent, setReferralPercent] = useState(25);
+  const [supportTelegramUrl, setSupportTelegramUrl] = useState("");
   const [newPlan, setNewPlan] = useState(emptyPlanForm);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editPlan, setEditPlan] = useState(emptyPlanForm);
@@ -85,6 +86,7 @@ export function AdminPanel() {
       setDepositWalletTrc20(s.depositWalletTrc20 ?? s.depositWallet ?? "");
       setWithdrawWallet(s.withdrawWallet);
       setReferralPercent(s.referralPercent);
+      setSupportTelegramUrl(s.supportTelegramUrl ?? "");
     }
   }
 
@@ -101,6 +103,7 @@ export function AdminPanel() {
         depositWalletTrc20,
         withdrawWallet,
         referralPercent,
+        supportTelegramUrl,
       }),
     });
     alert("Saved");
@@ -256,6 +259,13 @@ export function AdminPanel() {
           className="w-32 rounded border px-3 py-2"
           value={referralPercent}
           onChange={(e) => setReferralPercent(parseFloat(e.target.value))}
+        />
+        <label className="block text-sm">Telegram support (link or @username)</label>
+        <input
+          className="w-full rounded border px-3 py-2 font-mono text-sm"
+          placeholder="https://t.me/your_support"
+          value={supportTelegramUrl}
+          onChange={(e) => setSupportTelegramUrl(e.target.value)}
         />
         <button
           type="button"

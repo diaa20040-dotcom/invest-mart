@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import type { Locale } from "@/lib/i18n";
 import { t } from "@/lib/i18n";
@@ -148,7 +149,18 @@ export function HomeOverview({
 
 export function HomeGuest({ locale }: { locale: Locale }) {
   return (
-    <section className="card p-6">
+    <section className="card overflow-hidden p-0">
+      <div className="relative aspect-[16/9] w-full bg-slate-900">
+        <Image
+          src="/images/platform-hero.png"
+          alt={t(locale, "appName")}
+          fill
+          className="object-cover"
+          sizes="(max-width: 768px) 100vw, 640px"
+          priority
+        />
+      </div>
+      <div className="p-6">
       <h1 className="text-2xl font-semibold tracking-tight text-slate-900">
         {t(locale, "homeGuestTitle")}
       </h1>
@@ -166,6 +178,7 @@ export function HomeGuest({ locale }: { locale: Locale }) {
         >
           {t(locale, "login")}
         </Link>
+      </div>
       </div>
     </section>
   );

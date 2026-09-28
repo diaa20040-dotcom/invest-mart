@@ -110,6 +110,10 @@ export const translations = {
     noAccountYet: "Don't have an account?",
     languageSettings: "Language",
     languageSettingsHint: "Choose your preferred interface language.",
+    support: "Support",
+    supportTelegramAdmin: "Telegram support link",
+    supportTelegramHint:
+      "Full link (https://t.me/...) or @username. Shown on login, register, and header.",
   },
   ar: {
     appName: "إنفست مارت",
@@ -221,6 +225,10 @@ export const translations = {
     noAccountYet: "ليس لديك حساب؟",
     languageSettings: "اللغة",
     languageSettingsHint: "اختر لغة واجهة المنصة.",
+    support: "الدعم",
+    supportTelegramAdmin: "رابط دعم تيليجرام",
+    supportTelegramHint:
+      "رابط كامل (https://t.me/...) أو @username. يظهر في تسجيل الدخول والتسجيل والهيدر.",
   },
 } as const;
 

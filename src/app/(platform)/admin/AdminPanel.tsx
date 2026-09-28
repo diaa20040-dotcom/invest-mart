@@ -34,6 +34,16 @@ type PendingDeposit = {
   senderAddress: string;
 };
 
+type PendingWithdrawal = {
+  id: string;
+  amount: number;
+  network: string;
+  walletAddress: string;
+  createdAt: string;
+  userEmail: string;
+  userName: string | null;
+};
+
 const emptyPlanForm = {
   nameEn: "",
   nameAr: "",
@@ -46,6 +56,7 @@ export function AdminPanel() {
   const [plans, setPlans] = useState<Plan[]>([]);
   const [users, setUsers] = useState<AdminUser[]>([]);
   const [deposits, setDeposits] = useState<PendingDeposit[]>([]);
+  const [withdrawals, setWithdrawals] = useState<PendingWithdrawal[]>([]);
   const [depositWalletBep20, setDepositWalletBep20] = useState("");
   const [depositWalletTrc20, setDepositWalletTrc20] = useState("");
   const [withdrawWallet, setWithdrawWallet] = useState("");
@@ -57,15 +68,17 @@ export function AdminPanel() {
   const [resetPassword, setResetPassword] = useState("");
 
   async function load() {
-    const [pRes, sRes, uRes, dRes] = await Promise.all([
+    const [pRes, sRes, uRes, dRes, wRes] = await Promise.all([
       fetch("/api/admin/plans"),
       fetch("/api/admin/settings"),
       fetch("/api/admin/users"),
       fetch("/api/admin/deposits"),
+      fetch("/api/admin/withdrawals"),
     ]);
     if (pRes.ok) setPlans(await pRes.json());
     if (uRes.ok) setUsers(await uRes.json());
     if (dRes.ok) setDeposits(await dRes.json());
+    if (wRes.ok) setWithdrawals(await wRes.json());
     if (sRes.ok) {
       const s = await sRes.json();
       setDepositWalletBep20(s.depositWalletBep20 ?? s.depositWallet ?? "");
@@ -177,6 +190,22 @@ export function AdminPanel() {
     load();
   }
 
+  async function approveWithdrawal(id: string) {
+    const res = await fetch(`/api/admin/withdrawals/${id}/approve`, {
+      method: "POST",
+    });
+    if (!res.ok) alert("Approve failed");
+    load();
+  }
+
+  async function rejectWithdrawal(id: string) {
+    const res = await fetch(`/api/admin/withdrawals/${id}/reject`, {
+      method: "POST",
+    });
+    if (!res.ok) alert("Reject failed");
+    load();
+  }
+
   async function resetUserPassword() {
     if (!resetUserId || resetPassword.length < 6) {
       alert("Pick a user and enter a password (min 6 characters)");
@@ -213,7 +242,9 @@ export function AdminPanel() {
           value={depositWalletTrc20}
           onChange={(e) => setDepositWalletTrc20(e.target.value)}
         />
-        <label className="block text-sm">Withdraw (payout) wallet</label>
+        <label className="block text-sm">
+          Admin hot wallet (reference — users enter their own address on withdraw)
+        </label>
         <input
           className="w-full rounded border px-3 py-2 font-mono text-sm"
           value={withdrawWallet}
@@ -270,6 +301,48 @@ export function AdminPanel() {
                     type="button"
                     className="text-red-600"
                     onClick={() => rejectDeposit(d.id)}
+                  >
+                    Reject
+                  </button>
+                </span>
+              </li>
+            ))}
+          </ul>
+        )}
+      </section>
+
+      <section className="card space-y-3 p-5">
+        <h2 className="font-bold">Pending withdrawals</h2>
+        {withdrawals.length === 0 ? (
+          <p className="text-sm text-slate-500">No pending withdrawals.</p>
+        ) : (
+          <ul className="space-y-2 text-sm">
+            {withdrawals.map((w) => (
+              <li
+                key={w.id}
+                className="flex flex-wrap items-center justify-between gap-2 border-b py-2"
+              >
+                <span className="min-w-0 flex-1">
+                  <span className="block font-medium">{w.userEmail}</span>
+                  <span className="block text-slate-600">
+                    ${w.amount.toFixed(2)} · {w.network?.toUpperCase() ?? "?"}
+                  </span>
+                  <span className="block break-all font-mono text-xs text-slate-500">
+                    To: {w.walletAddress}
+                  </span>
+                </span>
+                <span className="flex gap-2">
+                  <button
+                    type="button"
+                    className="text-indigo-600"
+                    onClick={() => approveWithdrawal(w.id)}
+                  >
+                    Approve
+                  </button>
+                  <button
+                    type="button"
+                    className="text-red-600"
+                    onClick={() => rejectWithdrawal(w.id)}
                   >
                     Reject
                   </button>

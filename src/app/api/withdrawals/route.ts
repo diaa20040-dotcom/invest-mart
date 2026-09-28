@@ -4,10 +4,15 @@ import { prisma } from "@/lib/prisma";
 import { getSessionUserId } from "@/lib/auth";
 import { hasUnlimitedBalance } from "@/lib/balance";
 import { MIN_WITHDRAWAL_USD } from "@/lib/platform-rules";
+import {
+  type DepositNetwork,
+  isValidSenderAddress,
+} from "@/lib/deposit-networks";
 
 const schema = z.object({
   amount: z.number().min(MIN_WITHDRAWAL_USD),
-  walletAddress: z.string().min(8),
+  network: z.enum(["bep20", "trc20"]),
+  walletAddress: z.string().min(10).max(120),
 });
 
 export async function POST(req: Request) {
@@ -21,6 +26,12 @@ export async function POST(req: Request) {
       { error: "min_withdrawal", min: MIN_WITHDRAWAL_USD },
       { status: 400 }
     );
+  }
+
+  const network = parsed.data.network as DepositNetwork;
+  const wallet = parsed.data.walletAddress.trim();
+  if (!isValidSenderAddress(network, wallet)) {
+    return NextResponse.json({ error: "invalid_wallet" }, { status: 400 });
   }
 
   const user = await prisma.user.findUnique({ where: { id: userId } });
@@ -43,7 +54,8 @@ export async function POST(req: Request) {
       data: {
         userId,
         amount: parsed.data.amount,
-        walletAddress: parsed.data.walletAddress,
+        network,
+        walletAddress: wallet,
         status: "pending",
       },
     });
@@ -52,7 +64,7 @@ export async function POST(req: Request) {
         userId,
         type: "withdrawal",
         amount: unlimited ? 0 : -parsed.data.amount,
-        meta: unlimited ? JSON.stringify({ unlimited: true }) : undefined,
+        meta: JSON.stringify({ network, walletAddress: wallet }),
       },
     });
   });

@@ -65,6 +65,7 @@ model Withdrawal {
   userId        String
   user          User     @relation(fields: [userId], references: [id])
   amount        Float
+  network       String   @default("trc20")
   walletAddress String
   status        String   @default("pending")
   createdAt     DateTime @default(now())

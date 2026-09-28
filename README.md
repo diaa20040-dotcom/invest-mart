@@ -25,7 +25,11 @@ Open http://localhost:3000
 2. Deposit — send USDT to the shown wallet, submit network, amount, and your sender address. Admin approves in `/admin` (+ 25% referral bonus to referrer).
 3. Buy a $9 plan on **Plans**.
 4. **Profile** → claim daily profit ($3 per active plan per day).
-5. Request withdrawal to your wallet address.
+5. **Profile** → withdraw: choose **BEP20 or TRC20** and enter **your** wallet address (admin approves in `/admin`).
+
+## Deploy (free hosting + custom domain)
+
+See [DEPLOY-AR.md](./DEPLOY-AR.md) (Arabic) for GitHub, Vercel, Turso/Railway, and domain setup.
 
 ---
 

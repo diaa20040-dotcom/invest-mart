@@ -6,17 +6,16 @@ import type { Locale } from "@/lib/i18n";
 import { t } from "@/lib/i18n";
 import { formatCountdown } from "@/lib/daily-profit";
 import { MIN_WITHDRAWAL_USD } from "@/lib/platform-rules";
+import type { DepositNetwork } from "@/lib/deposit-networks";
 
 export function ProfileActions({
   locale,
-  payoutWallet,
   canClaim,
   claimableAmount,
   nextClaimAtIso,
   hasActivePlan,
 }: {
   locale: Locale;
-  payoutWallet: string;
   canClaim: boolean;
   claimableAmount: number;
   nextClaimAtIso: string | null;
@@ -25,6 +24,7 @@ export function ProfileActions({
   const router = useRouter();
   const [amount, setAmount] = useState("");
   const [wallet, setWallet] = useState("");
+  const [withdrawNetwork, setWithdrawNetwork] = useState<DepositNetwork>("trc20");
   const [msg, setMsg] = useState("");
   const [nextClaimAt, setNextClaimAt] = useState<number | null>(
     nextClaimAtIso ? new Date(nextClaimAtIso).getTime() : null
@@ -84,13 +84,16 @@ export function ProfileActions({
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         amount: parseFloat(amount),
-        walletAddress: wallet,
+        network: withdrawNetwork,
+        walletAddress: wallet.trim(),
       }),
     });
     if (!res.ok) {
       const err = await res.json().catch(() => ({}));
       if (err.error === "min_withdrawal") {
         setMsg(t(locale, "withdrawMinHint"));
+      } else if (err.error === "invalid_wallet") {
+        setMsg(t(locale, "invalidSenderWallet"));
       } else {
         setMsg(t(locale, "insufficientBalance"));
       }
@@ -98,6 +101,7 @@ export function ProfileActions({
     }
     setAmount("");
     setWallet("");
+    setMsg(t(locale, "withdrawPending"));
     router.refresh();
   }
 
@@ -145,12 +149,32 @@ export function ProfileActions({
       </div>
       <div className="card p-5">
         <h2 className="font-bold">{t(locale, "withdrawTitle")}</h2>
-        <p className="mt-1 text-xs text-slate-500">{t(locale, "withdrawWalletHint")}</p>
+        <p className="mt-1 text-xs text-slate-500">{t(locale, "withdrawUserHint")}</p>
         <p className="mt-1 text-xs font-medium text-slate-600">{t(locale, "withdrawMinHint")}</p>
-        <p className="mt-2 break-all rounded bg-slate-100 p-2 font-mono text-xs">
-          {payoutWallet}
-        </p>
-        <form onSubmit={withdraw} className="mt-3 space-y-2">
+        <form onSubmit={withdraw} className="mt-3 space-y-3">
+          <fieldset className="space-y-2">
+            <legend className="text-sm font-medium">{t(locale, "withdrawNetwork")}</legend>
+            <div className="flex flex-wrap gap-4 text-sm">
+              <label className="flex cursor-pointer items-center gap-2">
+                <input
+                  type="radio"
+                  name="withdrawNetwork"
+                  checked={withdrawNetwork === "trc20"}
+                  onChange={() => setWithdrawNetwork("trc20")}
+                />
+                {t(locale, "networkTrc20")}
+              </label>
+              <label className="flex cursor-pointer items-center gap-2">
+                <input
+                  type="radio"
+                  name="withdrawNetwork"
+                  checked={withdrawNetwork === "bep20"}
+                  onChange={() => setWithdrawNetwork("bep20")}
+                />
+                {t(locale, "networkBep20")}
+              </label>
+            </div>
+          </fieldset>
           <input
             type="number"
             min={MIN_WITHDRAWAL_USD}
@@ -164,8 +188,9 @@ export function ProfileActions({
           <input
             type="text"
             required
+            autoComplete="off"
             placeholder={t(locale, "yourWallet")}
-            className="w-full rounded-lg border px-3 py-2 text-sm"
+            className="w-full rounded-lg border px-3 py-2 font-mono text-sm"
             value={wallet}
             onChange={(e) => setWallet(e.target.value)}
           />

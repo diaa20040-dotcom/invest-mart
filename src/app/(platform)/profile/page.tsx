@@ -16,7 +16,6 @@ export default async function ProfilePage() {
   const user = await getCurrentUser();
   if (!user) redirect("/login");
 
-  const settings = await prisma.siteSetting.findUnique({ where: { id: 1 } });
   const userPlans = await prisma.userPlan.findMany({
     where: { userId: user.id },
     include: { plan: true },
@@ -70,7 +69,6 @@ export default async function ProfilePage() {
 
       <ProfileActions
         locale={locale}
-        payoutWallet={settings?.withdrawWallet ?? ""}
         canClaim={profitStatus.canClaim}
         claimableAmount={profitStatus.claimableTotal}
         nextClaimAtIso={profitStatus.nextClaimAt?.toISOString() ?? null}

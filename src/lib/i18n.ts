@@ -57,6 +57,10 @@ export const translations = {
       "Request submitted. Balance updates after admin verifies your transfer on-chain.",
     withdrawTitle: "Withdraw",
     withdrawWalletHint: "Funds are sent from our payout wallet to your address.",
+    withdrawUserHint:
+      "Choose USDT network (BEP20 or TRC20) and enter your own wallet address to receive funds.",
+    withdrawNetwork: "Withdrawal network",
+    withdrawPending: "Withdrawal request submitted. Processing after admin approval.",
     withdrawMinHint: "Minimum withdrawal: $1",
     signupBonusHint: "New accounts receive $1 to try the free plan.",
     yourWallet: "Your wallet address",
@@ -161,6 +165,10 @@ export const translations = {
       "تم إرسال الطلب. يُحدَّث الرصيد بعد أن يراجع الأدمن التحويل على الشبكة.",
     withdrawTitle: "سحب",
     withdrawWalletHint: "يتم الإرسال من محفظة السحب إلى عنوانك.",
+    withdrawUserHint:
+      "اختر شبكة USDT (BEP20 أو TRC20) وأدخل عنوان محفظتك لاستلام المبلغ.",
+    withdrawNetwork: "شبكة السحب",
+    withdrawPending: "تم إرسال طلب السحب. يُعالَج بعد موافقة الأدمن.",
     withdrawMinHint: "الحد الأدنى للسحب: 1 دولار",
     signupBonusHint: "كل حساب جديد يحصل على 1 دولار لتجربة الخطة المجانية.",
     yourWallet: "عنوان محفظتك",

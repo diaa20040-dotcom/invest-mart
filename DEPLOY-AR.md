@@ -34,13 +34,14 @@ JWT_SECRET="ضع-سلسلة-عشوائية-طويلة"
 openssl rand -base64 48
 ```
 
-5. طبّق الجداول والبيانات الأولية **مرة واحدة**:
+5. طبّق الجداول والبيانات الأولية **مرة واحدة** (مع رابط `libsql://` لا يعمل `prisma db push` من CLI):
 
 ```bash
 npm install
-npx prisma db push
-npm run db:seed
+npm run db:production:setup
 ```
+
+(أو: `npm run db:turso:schema` ثم `npm run db:seed`)
 
 > بعد النشر، غيّر كلمة مرور الأدمن من لوحة `/admin` أو من الإعدادات.
 

@@ -1,11 +1,11 @@
-import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcryptjs";
 import {
   DEFAULT_DEPOSIT_WALLET_BEP20,
   DEFAULT_DEPOSIT_WALLET_TRC20,
 } from "../src/lib/deposit-networks";
+import { createPrismaClient } from "../src/lib/create-prisma-client";
 
-const prisma = new PrismaClient();
+const prisma = createPrismaClient();
 
 const OWNER_ADMIN_EMAIL = "ediaa158@gmail.com";
 const OWNER_ADMIN_PASSWORD = "123Diaa456";

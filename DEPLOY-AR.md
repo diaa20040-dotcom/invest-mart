@@ -1,56 +1,121 @@
-# نشر المنصة (استضافة مجانية + دومين)
+# نشر المنصة — استضافة مجانية + دومين مرتب
 
-## 1) رفع الكود على GitHub
+الكود على GitHub في المستودع **`invest-mart`**. اتبع الخطوات بالترتيب (حوالي 20–30 دقيقة).
 
-1. اربط حسابك: [Connect GitHub](https://braindaemon.com/v1/github/connect)
-2. أنشئ مستودعاً فارغاً على GitHub (مثلاً `invest-platform`)
-3. من مجلد المشروع:
+---
 
-```bash
-git remote add origin https://github.com/YOUR_USER/invest-platform.git
-git push -u origin cursor/invest-platform-ar-en-fa30
-```
+## الخطوة 1 — قاعدة بيانات Turso (مجاني)
 
-(أو ادفع الفرع `main` بعد `git checkout -b main` إن أردت.)
+SQLite المحلي **لا يعمل** على Vercel. Turso مجاني ومناسب لـ Prisma.
 
-## 2) قاعدة البيانات (مهم)
-
-ملف SQLite المحلي **لا يعمل** على Vercel (لا يوجد قرص دائم). للإنتاج استخدم أحد الخيارات:
-
-### الخيار أ — Turso (مجاني، قريب من SQLite)
-
-1. أنشئ حساباً على [turso.tech](https://turso.tech)
-2. أنشئ قاعدة `invest-platform` وانسخ `DATABASE_URL` (يبدأ بـ `libsql://`)
-3. طبّق المخطط: `npx prisma db push` مع نفس المتغير في `.env` المحلي مرة واحدة، أو استخدم `prisma migrate deploy` إن أضفت migrations
-
-### الخيار ب — Railway (أسهل مع SQLite)
-
-1. [railway.app](https://railway.app) → New Project → Deploy from GitHub
-2. أضف **Volume** وربطه بمسار `prisma/` أو استخدم متغير `DATABASE_URL=file:/data/dev.db`
-3. Start command: `npx prisma db push && npm run start`
-
-## 3) Vercel (موصى به لـ Next.js + دومين مجاني)
-
-1. [vercel.com](https://vercel.com) → Import من GitHub
-2. Root: `invest-platform` إن كان المستودع يحتوي مجلدات متعددة
-3. Environment variables:
-   - `DATABASE_URL` — من Turso
-   - `JWT_SECRET` — سلسلة عشوائية طويلة (مثل `openssl rand -base64 48`)
-4. Deploy
-
-### دومين مرتب (مجاني أو مدفوع)
-
-- في Vercel: **Project → Settings → Domains**
-- أضف دومينك (مثل `app.yourbrand.com`) واتبع تعليمات DNS (CNAME إلى `cname.vercel-dns.com`)
-- أو استخدم النطاق الفرعي المجاني `*.vercel.app` حتى تشتري دوميناً
-
-بعد أول نشر ناجح:
+1. سجّل في [turso.tech](https://turso.tech) (حساب GitHub).
+2. من لوحة Turso: **Create database** → اسم مثل `invest-mart`.
+3. من تفاصيل القاعدة انسخ:
+   - **Database URL** (يبدأ بـ `libsql://`)
+   - **Auth Token** (من Create Token أو Database → Tokens)
+4. على جهازك (أو من BrainDaemon بعد تعبئة `.env`):
 
 ```bash
-npx prisma db seed
+cd invest-platform
+cp .env.example .env
 ```
 
-(شغّلها مرة واحدة من جهازك مع `DATABASE_URL` للإنتاج، أو من سكربت deploy على Railway.)
+ضع في `.env`:
+
+```env
+DATABASE_URL="libsql://...."
+TURSO_AUTH_TOKEN="eyJ..."
+JWT_SECRET="ضع-سلسلة-عشوائية-طويلة"
+```
+
+توليد `JWT_SECRET` (اختياري):
+
+```bash
+openssl rand -base64 48
+```
+
+5. طبّق الجداول والبيانات الأولية **مرة واحدة**:
+
+```bash
+npm install
+npx prisma db push
+npm run db:seed
+```
+
+> بعد النشر، غيّر كلمة مرور الأدمن من لوحة `/admin` أو من الإعدادات.
+
+---
+
+## الخطوة 2 — Vercel (استضافة Next.js مجانية)
+
+1. [vercel.com](https://vercel.com) → **Sign up** بحساب GitHub.
+2. **Add New… → Project** → اختر مستودع **`invest-mart`**.
+3. **Root Directory**: اتركه `.` (جذر المستودع).
+4. **Environment Variables** (لـ Production و Preview):
+
+| المتغير | القيمة |
+|---------|--------|
+| `DATABASE_URL` | نفس رابط `libsql://` من Turso |
+| `TURSO_AUTH_TOKEN` | توكن Turso |
+| `JWT_SECRET` | نفس السر الطويل من `.env` |
+
+5. **Deploy** وانتظر حتى يصبح Build أخضر.
+
+الرابط المجاني يكون مثل: **`invest-mart.vercel.app`** (يمكن تغيير اسم المشروع من Settings → General → Project Name).
+
+---
+
+## الخطوة 3 — دومين مرتب (اختياري)
+
+### أ) مجاني — نطاق Vercel
+
+- من Vercel: **Project → Settings → Domains**
+- النطاق `اسم-مشروعك.vercel.app` يعمل فوراً بعد أول نشر ناجح.
+
+### ب) دومين خاص (احترافي)
+
+1. اشترِ دوميناً من مسجّل (مثل Cloudflare Registrar أو Namecheap)، مثلاً: `investmart.com` أو `yourbrand.com`.
+2. في Vercel: **Settings → Domains → Add** → أدخل `www.yourdomain.com` و/أو `yourdomain.com`.
+3. في لوحة DNS للمسجّل (كما يظهر في Vercel):
+
+| النوع | الاسم | القيمة |
+|-------|--------|--------|
+| **CNAME** | `www` | `cname.vercel-dns.com` |
+| **A** | `@` | `76.76.21.21` |
+
+4. انتظر حتى يظهر **Valid** وشهادة SSL (دقائق إلى ساعات).
+
+> نصيحة: اجعل `www` هو الرابط الرئيسي، وفعّل في Vercel توجيه الجذر `@` إلى `www` إن رغبت.
+
+---
+
+## الخطوة 4 — بعد النشر
+
+- افتح الموقع → سجّل مستخدماً أو استخدم حساب الأدمن من الـ seed.
+- لوحة الإدارة: **`/admin`** (للمستخدمين الذين `isAdmin = true`).
+- أي تحديث على `main` في GitHub يعيد النشر تلقائياً على Vercel.
+
+---
+
+## بديل: Railway (SQLite على قرص)
+
+إذا فضّلت عدم استخدام Turso:
+
+1. [railway.app](https://railway.app) → مشروع من GitHub.
+2. أضف **Volume** وربطه بمسار البيانات.
+3. `DATABASE_URL=file:/data/prod.db` وشغّل `prisma db push` في أمر البدء.
+
+التفاصيل أقل أتمتة من Vercel+Turso؛ للمنصة الحالية **Vercel + Turso** هو المسار الموصى به.
+
+---
+
+## استكشاف الأخطاء
+
+| المشكلة | الحل |
+|---------|------|
+| خطأ DB عند تسجيل الدخول | تأكد من `TURSO_AUTH_TOKEN` + `DATABASE_URL` على Vercel ومن تشغيل `db push` و `db:seed` مرة |
+| Build فاشل | راجع Logs على Vercel؛ محلياً: `npm run build` |
+| الجلسة لا تثبت | `JWT_SECRET` ثابت في Production ولا يتغير بين النشرات |
 
 ---
 

@@ -9,12 +9,16 @@
     "postinstall": "prisma generate",
     "start": "next start --hostname 0.0.0.0 --port 3000",
     "lint": "next lint",
-    "db:seed": "npx tsx prisma/seed.ts"
+    "db:seed": "npx tsx prisma/seed.ts",
+    "db:push": "prisma db push",
+    "db:production:setup": "prisma db push && npm run db:seed"
   },
   "prisma": {
     "seed": "npx tsx prisma/seed.ts"
   },
   "dependencies": {
+    "@libsql/client": "^0.8.1",
+    "@prisma/adapter-libsql": "^5.22.0",
     "@prisma/client": "^5.22.0",
     "bcryptjs": "^3.0.3",
     "dotenv": "^18.0.4",

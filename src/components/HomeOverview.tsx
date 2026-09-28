@@ -1,4 +1,3 @@
-import Image from "next/image";
 import Link from "next/link";
 import type { Locale } from "@/lib/i18n";
 import { t } from "@/lib/i18n";
@@ -149,18 +148,7 @@ export function HomeOverview({
 
 export function HomeGuest({ locale }: { locale: Locale }) {
   return (
-    <section className="card overflow-hidden p-0">
-      <div className="flex items-center justify-center bg-slate-950 px-6 py-10">
-        <Image
-          src="/images/logo.png"
-          alt={t(locale, "appName")}
-          width={280}
-          height={280}
-          className="h-auto w-full max-w-[280px] object-contain"
-          priority
-        />
-      </div>
-      <div className="p-6">
+    <section className="card p-6">
       <h1 className="text-2xl font-semibold tracking-tight text-slate-900">
         {t(locale, "homeGuestTitle")}
       </h1>
@@ -178,7 +166,6 @@ export function HomeGuest({ locale }: { locale: Locale }) {
         >
           {t(locale, "login")}
         </Link>
-      </div>
       </div>
     </section>
   );

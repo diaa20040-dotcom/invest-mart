@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
-import { BrandLogo } from "@/components/BrandLogo";
 import type { Locale } from "@/lib/i18n";
 import { t } from "@/lib/i18n";
 
@@ -45,10 +44,10 @@ export function LoginForm({ locale }: { locale: Locale }) {
 
   return (
     <div className="w-full max-w-md">
-      <div className="mb-6">
-        <BrandLogo locale={locale} variant="auth" href="/" />
-      </div>
       <div className="mb-8 text-center">
+        <p className="text-sm font-medium tracking-wide text-indigo-300">
+          {t(locale, "appName")}
+        </p>
         <h1 className="mt-2 text-3xl font-semibold tracking-tight">
           {t(locale, "authLoginTitle")}
         </h1>

@@ -8,6 +8,8 @@ import {
 } from "@/lib/auth";
 import { SIGNUP_BONUS_USD } from "@/lib/platform-rules";
 
+export const runtime = "nodejs";
+
 const schema = z.object({
   email: z.string().email(),
   password: z.string().min(6),
@@ -23,42 +25,51 @@ export async function POST(req: Request) {
   const { email, password, name, referralCode } = parsed.data;
 
   try {
-  const exists = await prisma.user.findUnique({ where: { email } });
-  if (exists) {
-    return NextResponse.json({ error: "Email already registered" }, { status: 409 });
-  }
+    const exists = await prisma.user.findUnique({ where: { email } });
+    if (exists) {
+      return NextResponse.json(
+        { error: "Email already registered" },
+        { status: 409 }
+      );
+    }
 
-  let referredById: string | undefined;
-  if (referralCode?.trim()) {
-    const referrer = await prisma.user.findUnique({
-      where: { referralCode: referralCode.trim().toUpperCase() },
-    });
-    if (referrer) referredById = referrer.id;
-  }
+    let referredById: string | undefined;
+    if (referralCode?.trim()) {
+      const referrer = await prisma.user.findUnique({
+        where: { referralCode: referralCode.trim().toUpperCase() },
+      });
+      if (referrer) referredById = referrer.id;
+    }
 
-  const user = await prisma.$transaction(async (tx) => {
-    const created = await tx.user.create({
+    const passwordHash = await hashPassword(password);
+    const newReferralCode = await generateUniqueReferralCode();
+
+    const user = await prisma.user.create({
       data: {
         email,
-        passwordHash: await hashPassword(password),
+        passwordHash,
         name: name || null,
-        referralCode: await generateUniqueReferralCode(),
+        referralCode: newReferralCode,
         referredById,
         balance: SIGNUP_BONUS_USD,
       },
     });
-    await tx.transaction.create({
-      data: {
-        userId: created.id,
-        type: "signup_bonus",
-        amount: SIGNUP_BONUS_USD,
-      },
-    });
-    return created;
-  });
 
-  await createSession(user.id);
-  return NextResponse.json({ ok: true });
+    try {
+      await prisma.transaction.create({
+        data: {
+          userId: user.id,
+          type: "signup_bonus",
+          amount: SIGNUP_BONUS_USD,
+        },
+      });
+    } catch (ledgerError) {
+      await prisma.user.delete({ where: { id: user.id } }).catch(() => {});
+      throw ledgerError;
+    }
+
+    await createSession(user.id);
+    return NextResponse.json({ ok: true });
   } catch (e) {
     console.error("register", e);
     return NextResponse.json({ error: "database_unavailable" }, { status: 503 });

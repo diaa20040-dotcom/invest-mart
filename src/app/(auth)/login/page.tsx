@@ -6,7 +6,7 @@ import { LoginForm } from "@/components/auth/LoginForm";
 export default async function LoginPage() {
   const locale = (await getLocale()) as Locale;
   return (
-    <Suspense>
+    <Suspense fallback={<div className="min-h-[40vh]" />}>
       <LoginForm locale={locale} />
     </Suspense>
   );

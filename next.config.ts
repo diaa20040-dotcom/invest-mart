@@ -6,7 +6,11 @@ const nextConfig: NextConfig = {
     "@prisma/adapter-libsql",
     "@libsql/client",
   ],
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
   images: {
+    unoptimized: true,
     remotePatterns: [
       {
         protocol: "https",

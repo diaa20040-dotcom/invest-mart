@@ -25,7 +25,12 @@ export function LoginForm({ locale }: { locale: Locale }) {
     });
     setLoading(false);
     if (!res.ok) {
-      setError(t(locale, "loginFailed"));
+      const data = await res.json().catch(() => ({}));
+      if (data.error === "database_unavailable") {
+        setError(t(locale, "dbUnavailable"));
+      } else {
+        setError(t(locale, "loginFailed"));
+      }
       return;
     }
     const from = searchParams.get("from");

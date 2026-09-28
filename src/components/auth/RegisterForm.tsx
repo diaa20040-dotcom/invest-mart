@@ -32,9 +32,15 @@ export function RegisterForm({ locale }: { locale: Locale }) {
     setLoading(false);
     if (!res.ok) {
       const data = await res.json().catch(() => ({}));
-      setError(
-        typeof data.error === "string" ? data.error : t(locale, "registerFailed")
-      );
+      if (data.error === "database_unavailable") {
+        setError(t(locale, "dbUnavailable"));
+      } else if (data.error === "Email already registered") {
+        setError(t(locale, "emailTaken"));
+      } else {
+        setError(
+          typeof data.error === "string" ? data.error : t(locale, "registerFailed")
+        );
+      }
       return;
     }
     router.push("/");

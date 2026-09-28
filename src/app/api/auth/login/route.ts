@@ -13,12 +13,17 @@ export async function POST(req: Request) {
   if (!parsed.success) {
     return NextResponse.json({ error: "Invalid input" }, { status: 400 });
   }
-  const user = await prisma.user.findUnique({
-    where: { email: parsed.data.email },
-  });
-  if (!user || !(await verifyPassword(parsed.data.password, user.passwordHash))) {
-    return NextResponse.json({ error: "Wrong email or password" }, { status: 401 });
+  try {
+    const user = await prisma.user.findUnique({
+      where: { email: parsed.data.email },
+    });
+    if (!user || !(await verifyPassword(parsed.data.password, user.passwordHash))) {
+      return NextResponse.json({ error: "Wrong email or password" }, { status: 401 });
+    }
+    await createSession(user.id);
+    return NextResponse.json({ ok: true });
+  } catch (e) {
+    console.error("login", e);
+    return NextResponse.json({ error: "database_unavailable" }, { status: 503 });
   }
-  await createSession(user.id);
-  return NextResponse.json({ ok: true });
 }

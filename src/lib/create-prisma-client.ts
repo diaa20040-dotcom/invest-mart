@@ -12,6 +12,12 @@ export function createPrismaClient(): PrismaClient {
     (databaseUrl.startsWith("libsql:") ? databaseUrl : "");
   const authToken = process.env.TURSO_AUTH_TOKEN;
 
+  if (databaseUrl.startsWith("libsql:") && !authToken) {
+    throw new Error(
+      "TURSO_AUTH_TOKEN is required when DATABASE_URL uses libsql://"
+    );
+  }
+
   if (tursoUrl && authToken) {
     const libsql = createClient({ url: tursoUrl, authToken });
     const adapter = new PrismaLibSQL(libsql);

@@ -103,6 +103,9 @@ export const translations = {
     authRegisterSubtitle: "Join in minutes and start investing with partner stores.",
     loginFailed: "Wrong email or password",
     registerFailed: "Could not create account",
+    dbUnavailable:
+      "Database is not connected. Set Turso variables on the server and run setup.",
+    emailTaken: "This email is already registered",
     alreadyHaveAccount: "Already have an account?",
     noAccountYet: "Don't have an account?",
     languageSettings: "Language",
@@ -211,6 +214,9 @@ export const translations = {
     authRegisterSubtitle: "انضم في دقائق وابدأ الاستثمار مع المحلات الشريكة.",
     loginFailed: "البريد أو كلمة المرور غير صحيحة",
     registerFailed: "تعذّر إنشاء الحساب",
+    dbUnavailable:
+      "قاعدة البيانات غير متصلة. أضف متغيرات Turso على Vercel ثم شغّل التهيئة (راجع التعليمات).",
+    emailTaken: "هذا البريد مسجّل مسبقاً",
     alreadyHaveAccount: "لديك حساب بالفعل؟",
     noAccountYet: "ليس لديك حساب؟",
     languageSettings: "اللغة",

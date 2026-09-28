@@ -22,6 +22,7 @@ export async function POST(req: Request) {
   }
   const { email, password, name, referralCode } = parsed.data;
 
+  try {
   const exists = await prisma.user.findUnique({ where: { email } });
   if (exists) {
     return NextResponse.json({ error: "Email already registered" }, { status: 409 });
@@ -58,4 +59,8 @@ export async function POST(req: Request) {
 
   await createSession(user.id);
   return NextResponse.json({ ok: true });
+  } catch (e) {
+    console.error("register", e);
+    return NextResponse.json({ error: "database_unavailable" }, { status: 503 });
+  }
 }

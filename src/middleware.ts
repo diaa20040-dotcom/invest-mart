@@ -12,7 +12,9 @@ function isPublicPage(pathname: string) {
 function isPublicApi(pathname: string) {
   return (
     pathname === "/api/auth/login" ||
-    pathname === "/api/auth/register"
+    pathname === "/api/auth/register" ||
+    pathname === "/api/health/db" ||
+    pathname === "/api/setup/bootstrap"
   );
 }
 

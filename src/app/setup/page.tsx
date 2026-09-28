@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { SetupBootstrapForm } from "./SetupBootstrapForm";
 
 export const dynamic = "force-dynamic";
 
@@ -38,6 +39,14 @@ export default async function SetupPage() {
         {!ok && health.reason ? (
           <p className="mt-2 text-slate-200">
             السبب: <code className="text-indigo-200">{String(health.reason)}</code>
+            {health.connectError ? (
+              <>
+                {" "}
+                (
+                <code className="text-indigo-200">{String(health.connectError)}</code>
+                )
+              </>
+            ) : null}
           </p>
         ) : null}
         {health.hint ? (
@@ -67,6 +76,8 @@ export default async function SetupPage() {
           </Link>
         </li>
       </ol>
+
+      <SetupBootstrapForm />
     </main>
   );
 }

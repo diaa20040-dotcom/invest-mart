@@ -32,12 +32,22 @@ async function tursoChecks() {
   if (!url.startsWith("libsql:") || !authToken) {
     return { libsqlReachable: false, userTable: false };
   }
-  const client = createTursoClient();
   try {
+    const client = createTursoClient();
     await client.execute("SELECT 1");
-  } catch {
-    return { libsqlReachable: false, userTable: false };
+  } catch (e) {
+    const msg = (e instanceof Error ? e.message : String(e)).toLowerCase();
+    const connectError =
+      msg.includes("401") || msg.includes("unauthorized") || msg.includes("invalid")
+        ? "auth"
+        : msg.includes("404") || msg.includes("not found")
+          ? "not_found"
+          : msg.includes("fetch") || msg.includes("enotfound") || msg.includes("econnrefused")
+            ? "network"
+            : "unknown";
+    return { libsqlReachable: false, userTable: false, connectError };
   }
+  const client = createTursoClient();
   try {
     const rows = await client.execute(
       "SELECT name FROM sqlite_master WHERE type='table' AND name='User'"

@@ -88,6 +88,5 @@ model SiteSetting {
   depositWalletBep20   String @default("0x24E7dDA3585DCaDaebAF57436b71FFff7E1d1fE6")
   depositWalletTrc20   String @default("TMVCshbSF6YoTetHAuB2ru3w3HEnbgFTXj")
   withdrawWallet       String @default("TBD_WITHDRAW_WALLET")
-  referralPercent      Float  @default(25)
-  supportTelegramUrl   String @default("")
+  referralPercent    Float  @default(25)
 }

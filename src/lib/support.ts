@@ -1,4 +1,3 @@
-import { prisma } from "@/lib/prisma";
 import { cleanEnv } from "@/lib/turso-client";
 
 /** Normalize @username, t.me/foo, or full https URL. */
@@ -19,14 +18,5 @@ export function supportTelegramFromEnv(): string {
 
 export async function resolveSupportTelegramUrl(): Promise<string> {
   const fromEnv = supportTelegramFromEnv();
-  if (fromEnv) return fromEnv;
-  try {
-    const settings = await prisma.siteSetting.findUnique({ where: { id: 1 } });
-    if (settings?.supportTelegramUrl) {
-      return normalizeTelegramUrl(settings.supportTelegramUrl);
-    }
-  } catch {
-    /* db unavailable */
-  }
-  return DEFAULT_SUPPORT_TELEGRAM;
+  return fromEnv || DEFAULT_SUPPORT_TELEGRAM;
 }

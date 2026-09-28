@@ -20,11 +20,9 @@ async function main() {
       depositWalletTrc20: DEFAULT_DEPOSIT_WALLET_TRC20,
       withdrawWallet: "YOUR_PAYOUT_WALLET_ADDRESS",
       referralPercent: 25,
-      supportTelegramUrl: "https://t.me/Invest_Mart_support",
     },
     update: {
       referralPercent: 25,
-      supportTelegramUrl: "https://t.me/Invest_Mart_support",
       depositWalletBep20: DEFAULT_DEPOSIT_WALLET_BEP20,
       depositWalletTrc20: DEFAULT_DEPOSIT_WALLET_TRC20,
       depositWallet: DEFAULT_DEPOSIT_WALLET_TRC20,

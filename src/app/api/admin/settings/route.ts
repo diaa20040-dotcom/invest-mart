@@ -19,7 +19,6 @@ const schema = z.object({
   depositWalletTrc20: z.string().min(10),
   withdrawWallet: z.string().min(3),
   referralPercent: z.number().min(0).max(100),
-  supportTelegramUrl: z.string().max(500).optional(),
 });
 
 export async function PUT(req: Request) {

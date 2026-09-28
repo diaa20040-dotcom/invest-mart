@@ -34,15 +34,25 @@ export function resolveTursoUrl(): string {
   return "";
 }
 
+/** Remote Turso HTTP API expects https://; libsql:// is for the native driver. */
+export function tursoHttpUrl(libsqlUrl: string): string {
+  if (libsqlUrl.startsWith("libsql://")) {
+    return `https://${libsqlUrl.slice("libsql://".length)}`;
+  }
+  if (libsqlUrl.startsWith("https://") || libsqlUrl.startsWith("http://")) {
+    return libsqlUrl.replace(/^http:\/\//, "https://");
+  }
+  return libsqlUrl;
+}
+
 export function createTursoClient(): Client {
-  const url = resolveTursoUrl();
+  const libsqlUrl = resolveTursoUrl();
   const authToken = cleanEnv(process.env.TURSO_AUTH_TOKEN);
-  if (!url || !authToken) {
+  if (!libsqlUrl || !authToken) {
     throw new Error("Turso URL and TURSO_AUTH_TOKEN are required");
   }
-  const config = { url, authToken };
   if (process.env.VERCEL === "1") {
-    return createWebClient(config);
+    return createWebClient({ url: tursoHttpUrl(libsqlUrl), authToken });
   }
-  return createNodeClient(config);
+  return createNodeClient({ url: libsqlUrl, authToken });
 }

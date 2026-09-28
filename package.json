@@ -11,7 +11,8 @@
     "lint": "next lint",
     "db:seed": "npx tsx prisma/seed.ts",
     "db:push": "prisma db push",
-    "db:production:setup": "prisma db push && npm run db:seed"
+    "db:production:setup": "node scripts/apply-turso-schema.mjs && npm run db:seed",
+    "db:turso:schema": "node scripts/apply-turso-schema.mjs"
   },
   "prisma": {
     "seed": "npx tsx prisma/seed.ts"

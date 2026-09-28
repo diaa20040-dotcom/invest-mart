@@ -52,7 +52,11 @@ npm run db:production:setup
 1. [vercel.com](https://vercel.com) → **Sign up** بحساب GitHub.
 2. **Add New… → Project** → اختر مستودع **`invest-mart`**.
 3. **Root Directory**: اتركه `.` (جذر المستودع).
-4. **Environment Variables** (لـ Production و Preview):
+4. **Settings → General** (مهم):
+   - **Root Directory**: فارغ أو `.` (لا تضع `invest-platform` إلا إذا كان المستودع أبواً ومجلد المشروع داخله).
+   - **Node.js Version**: 20.x أو 22.x.
+   - **Build Command**: اتركه افتراضياً أو `npm run build` (موجود في `vercel.json`).
+5. **Environment Variables** (لـ Production و Preview):
 
 | المتغير | القيمة |
 |---------|--------|
@@ -60,7 +64,9 @@ npm run db:production:setup
 | `TURSO_AUTH_TOKEN` | توكن Turso |
 | `JWT_SECRET` | نفس السر الطويل من `.env` |
 
-5. **Deploy** وانتظر حتى يصبح Build أخضر.
+6. **Deploy** وانتظر حتى يصبح Build أخضر.
+
+> بعد كل push على `main` يمكنك التأكد من GitHub: تبويب **Actions** — workflow **CI** يجب أن يكون أخضر. إن كان أخضر هناك وفاشل على Vercel فالمشكلة من إعدادات Vercel أو متغيرات البيئة وليس من الكود.
 
 الرابط المجاني يكون مثل: **`invest-mart.vercel.app`** (يمكن تغيير اسم المشروع من Settings → General → Project Name).
 
@@ -114,8 +120,12 @@ npm run db:production:setup
 
 | المشكلة | الحل |
 |---------|------|
-| خطأ DB عند تسجيل الدخول | تأكد من `TURSO_AUTH_TOKEN` + `DATABASE_URL` على Vercel ومن تشغيل `db push` و `db:seed` مرة |
+| خطأ DB عند تسجيل الدخول | تأكد من `TURSO_AUTH_TOKEN` + `DATABASE_URL` على Vercel ومن تشغيل `npm run db:production:setup` مرة |
+| Build فاشل بعد «Compiled successfully» | تأكد أن آخر كود من `main` منشور (إصلاح middleware بدون `jose` في Edge) ثم **Redeploy** |
+| تحذيرات `jose` / `session-edge` في Logs | حدّث من GitHub `main` وأعد النشر — الـ middleware يستخدم Web Crypto فقط |
+| Build فاشل | في **Build Logs** مرّر للأسفل حتى السطور **الحمراء** (اللقطة غالباً تقطع قبل الخطأ). انسخ آخر 20 سطراً. |
 | Build فاشل | راجع Logs على Vercel؛ محلياً: `npm run build` |
+| نشر قديم | تأكد أن آخر commit يحتوي إصلاح middleware (بدون `jose` في Edge) ثم **Redeploy** مع **Clear cache** |
 | الجلسة لا تثبت | `JWT_SECRET` ثابت في Production ولا يتغير بين النشرات |
 
 ---

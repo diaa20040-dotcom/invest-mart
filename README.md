@@ -1,6 +1,6 @@
-# InvestMart — investment platform demo (EN / AR)
+# InvestMart — investment platform (EN / AR)
 
-Five main sections: home (partner store gallery), subscription plans, referrals (10%), deposit wallet, and profile (withdraw + daily profit claim).
+Home, subscription plans, referrals (25% of invitee deposits), USDT deposits (BEP20 + TRC20), and profile (withdraw + daily profit).
 
 ## Quick start
 
@@ -22,7 +22,7 @@ Open http://localhost:3000
 ## Test flow
 
 1. Register a user (optional referral code).
-2. Deposit — send amount; demo auto-approves in ~3 seconds and credits balance (+ referral bonus to referrer).
+2. Deposit — send USDT to the shown wallet, submit network, amount, and your sender address. Admin approves in `/admin` (+ 25% referral bonus to referrer).
 3. Buy a $9 plan on **Plans**.
 4. **Profile** → claim daily profit ($3 per active plan per day).
 5. Request withdrawal to your wallet address.

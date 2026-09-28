@@ -53,7 +53,8 @@ export const translations = {
     depositError: "Could not submit. Check the fields and try again.",
     amount: "Amount (USD)",
     submitDeposit: "Submit deposit request",
-    depositPending: "Your request was submitted. Balance updates after confirmation.",
+    depositPending:
+      "Request submitted. Balance updates after admin verifies your transfer on-chain.",
     withdrawTitle: "Withdraw",
     withdrawWalletHint: "Funds are sent from our payout wallet to your address.",
     withdrawMinHint: "Minimum withdrawal: $1",
@@ -156,7 +157,8 @@ export const translations = {
     depositError: "تعذّر الإرسال. راجع البيانات وحاول مرة أخرى.",
     amount: "المبلغ (دولار)",
     submitDeposit: "إرسال طلب الإيداع",
-    depositPending: "تم إرسال الطلب. يُحدَّث الرصيد بعد التأكيد.",
+    depositPending:
+      "تم إرسال الطلب. يُحدَّث الرصيد بعد أن يراجع الأدمن التحويل على الشبكة.",
     withdrawTitle: "سحب",
     withdrawWalletHint: "يتم الإرسال من محفظة السحب إلى عنوانك.",
     withdrawMinHint: "الحد الأدنى للسحب: 1 دولار",

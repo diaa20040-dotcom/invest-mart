@@ -6,8 +6,6 @@ import {
   generateUniqueReferralCode,
   hashPassword,
 } from "@/lib/auth";
-import { SIGNUP_BONUS_USD } from "@/lib/platform-rules";
-
 export const runtime = "nodejs";
 
 const schema = z.object({
@@ -51,22 +49,8 @@ export async function POST(req: Request) {
         name: name || null,
         referralCode: newReferralCode,
         referredById,
-        balance: SIGNUP_BONUS_USD,
       },
     });
-
-    try {
-      await prisma.transaction.create({
-        data: {
-          userId: user.id,
-          type: "signup_bonus",
-          amount: SIGNUP_BONUS_USD,
-        },
-      });
-    } catch (ledgerError) {
-      await prisma.user.delete({ where: { id: user.id } }).catch(() => {});
-      throw ledgerError;
-    }
 
     await createSession(user.id);
     return NextResponse.json({ ok: true });

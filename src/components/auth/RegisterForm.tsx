@@ -57,7 +57,6 @@ export function RegisterForm({ locale }: { locale: Locale }) {
           {t(locale, "authRegisterTitle")}
         </h1>
         <p className="mt-2 text-sm text-slate-400">{t(locale, "authRegisterSubtitle")}</p>
-        <p className="mt-2 text-sm text-indigo-300">{t(locale, "signupBonusHint")}</p>
       </div>
 
       <div className="rounded-2xl border border-white/10 bg-white/95 p-6 text-slate-900 shadow-2xl shadow-indigo-950/40 backdrop-blur sm:p-8">

@@ -1,5 +1,9 @@
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcryptjs";
+import {
+  DEFAULT_DEPOSIT_WALLET_BEP20,
+  DEFAULT_DEPOSIT_WALLET_TRC20,
+} from "../src/lib/deposit-networks";
 
 const prisma = new PrismaClient();
 
@@ -11,11 +15,18 @@ async function main() {
     where: { id: 1 },
     create: {
       id: 1,
-      depositWallet: "YOUR_DEPOSIT_WALLET_ADDRESS",
+      depositWallet: DEFAULT_DEPOSIT_WALLET_TRC20,
+      depositWalletBep20: DEFAULT_DEPOSIT_WALLET_BEP20,
+      depositWalletTrc20: DEFAULT_DEPOSIT_WALLET_TRC20,
       withdrawWallet: "YOUR_PAYOUT_WALLET_ADDRESS",
       referralPercent: 25,
     },
-    update: { referralPercent: 25 },
+    update: {
+      referralPercent: 25,
+      depositWalletBep20: DEFAULT_DEPOSIT_WALLET_BEP20,
+      depositWalletTrc20: DEFAULT_DEPOSIT_WALLET_TRC20,
+      depositWallet: DEFAULT_DEPOSIT_WALLET_TRC20,
+    },
   });
 
   const plans = [

@@ -2,39 +2,17 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import { getSessionUserId } from "@/lib/auth";
-import { creditReferralBonus } from "@/lib/referral";
+import {
+  type DepositNetwork,
+  isValidSenderAddress,
+} from "@/lib/deposit-networks";
 
 const schema = z.object({
   amount: z.number().positive(),
+  network: z.enum(["bep20", "trc20"]),
+  senderAddress: z.string().min(10).max(120),
   note: z.string().optional(),
 });
-
-const DEMO_AUTO_APPROVE = true;
-
-async function approveDeposit(depositId: string) {
-  const deposit = await prisma.deposit.findUnique({ where: { id: depositId } });
-  if (!deposit || deposit.status !== "pending") return;
-
-  await prisma.$transaction(async (tx) => {
-    await tx.deposit.update({
-      where: { id: depositId },
-      data: { status: "approved" },
-    });
-    await tx.user.update({
-      where: { id: deposit.userId },
-      data: { balance: { increment: deposit.amount } },
-    });
-    await tx.transaction.create({
-      data: {
-        userId: deposit.userId,
-        type: "deposit",
-        amount: deposit.amount,
-      },
-    });
-  });
-
-  await creditReferralBonus(deposit.userId, deposit.amount);
-}
 
 export async function POST(req: Request) {
   const userId = await getSessionUserId();
@@ -46,20 +24,22 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Invalid amount" }, { status: 400 });
   }
 
+  const network = parsed.data.network as DepositNetwork;
+  const sender = parsed.data.senderAddress.trim();
+  if (!isValidSenderAddress(network, sender)) {
+    return NextResponse.json({ error: "invalid_sender" }, { status: 400 });
+  }
+
   const deposit = await prisma.deposit.create({
     data: {
       userId,
       amount: parsed.data.amount,
+      network,
+      senderAddress: sender,
       note: parsed.data.note,
-      status: DEMO_AUTO_APPROVE ? "pending" : "pending",
+      status: "pending",
     },
   });
 
-  if (DEMO_AUTO_APPROVE) {
-    setTimeout(() => {
-      approveDeposit(deposit.id).catch(console.error);
-    }, 2500);
-  }
-
-  return NextResponse.json({ ok: true, id: deposit.id, demoAuto: DEMO_AUTO_APPROVE });
+  return NextResponse.json({ ok: true, id: deposit.id });
 }

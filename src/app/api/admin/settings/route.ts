@@ -14,7 +14,9 @@ export async function GET() {
 }
 
 const schema = z.object({
-  depositWallet: z.string().min(3),
+  depositWallet: z.string().min(3).optional(),
+  depositWalletBep20: z.string().min(10),
+  depositWalletTrc20: z.string().min(10),
   withdrawWallet: z.string().min(3),
   referralPercent: z.number().min(0).max(100),
 });
@@ -28,10 +30,18 @@ export async function PUT(req: Request) {
   if (!parsed.success) {
     return NextResponse.json({ error: "Invalid" }, { status: 400 });
   }
+  const data = parsed.data;
   const settings = await prisma.siteSetting.upsert({
     where: { id: 1 },
-    create: { id: 1, ...parsed.data },
-    update: parsed.data,
+    create: {
+      id: 1,
+      depositWallet: data.depositWalletTrc20,
+      ...data,
+    },
+    update: {
+      ...data,
+      depositWallet: data.depositWalletTrc20,
+    },
   });
   return NextResponse.json(settings);
 }

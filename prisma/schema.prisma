@@ -49,13 +49,15 @@ model UserPlan {
 }
 
 model Deposit {
-  id        String   @id @default(cuid())
-  userId    String
-  user      User     @relation(fields: [userId], references: [id])
-  amount    Float
-  status    String   @default("pending")
-  note      String?
-  createdAt DateTime @default(now())
+  id            String   @id @default(cuid())
+  userId        String
+  user          User     @relation(fields: [userId], references: [id])
+  amount        Float
+  status        String   @default("pending")
+  network       String   @default("trc20")
+  senderAddress String   @default("")
+  note          String?
+  createdAt     DateTime @default(now())
 }
 
 model Withdrawal {
@@ -79,8 +81,10 @@ model Transaction {
 }
 
 model SiteSetting {
-  id              Int    @id @default(1)
-  depositWallet   String @default("TBD_DEPOSIT_WALLET")
-  withdrawWallet  String @default("TBD_WITHDRAW_WALLET")
-  referralPercent Float  @default(25)
+  id                 Int    @id @default(1)
+  depositWallet      String @default("TBD_DEPOSIT_WALLET")
+  depositWalletBep20 String @default("0x24E7dDA3585DCaDaebAF57436b71FFff7E1d1fE6")
+  depositWalletTrc20 String @default("TMVCshbSF6YoTetHAuB2ru3w3HEnbgFTXj")
+  withdrawWallet     String @default("TBD_WITHDRAW_WALLET")
+  referralPercent    Float  @default(25)
 }

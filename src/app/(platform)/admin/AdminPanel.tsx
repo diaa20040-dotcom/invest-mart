@@ -30,6 +30,8 @@ type PendingDeposit = {
   createdAt: string;
   userEmail: string;
   userName: string | null;
+  network: string;
+  senderAddress: string;
 };
 
 const emptyPlanForm = {
@@ -44,7 +46,8 @@ export function AdminPanel() {
   const [plans, setPlans] = useState<Plan[]>([]);
   const [users, setUsers] = useState<AdminUser[]>([]);
   const [deposits, setDeposits] = useState<PendingDeposit[]>([]);
-  const [depositWallet, setDepositWallet] = useState("");
+  const [depositWalletBep20, setDepositWalletBep20] = useState("");
+  const [depositWalletTrc20, setDepositWalletTrc20] = useState("");
   const [withdrawWallet, setWithdrawWallet] = useState("");
   const [referralPercent, setReferralPercent] = useState(25);
   const [newPlan, setNewPlan] = useState(emptyPlanForm);
@@ -65,7 +68,8 @@ export function AdminPanel() {
     if (dRes.ok) setDeposits(await dRes.json());
     if (sRes.ok) {
       const s = await sRes.json();
-      setDepositWallet(s.depositWallet);
+      setDepositWalletBep20(s.depositWalletBep20 ?? s.depositWallet ?? "");
+      setDepositWalletTrc20(s.depositWalletTrc20 ?? s.depositWallet ?? "");
       setWithdrawWallet(s.withdrawWallet);
       setReferralPercent(s.referralPercent);
     }
@@ -80,7 +84,8 @@ export function AdminPanel() {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        depositWallet,
+        depositWalletBep20,
+        depositWalletTrc20,
         withdrawWallet,
         referralPercent,
       }),
@@ -196,11 +201,17 @@ export function AdminPanel() {
 
       <section className="card space-y-3 p-5">
         <h2 className="font-bold">Wallets & referral %</h2>
-        <label className="block text-sm">Deposit wallet</label>
+        <label className="block text-sm">USDT BEP20 deposit wallet</label>
         <input
           className="w-full rounded border px-3 py-2 font-mono text-sm"
-          value={depositWallet}
-          onChange={(e) => setDepositWallet(e.target.value)}
+          value={depositWalletBep20}
+          onChange={(e) => setDepositWalletBep20(e.target.value)}
+        />
+        <label className="block text-sm">USDT TRC20 deposit wallet</label>
+        <input
+          className="w-full rounded border px-3 py-2 font-mono text-sm"
+          value={depositWalletTrc20}
+          onChange={(e) => setDepositWalletTrc20(e.target.value)}
         />
         <label className="block text-sm">Withdraw (payout) wallet</label>
         <input
@@ -235,9 +246,17 @@ export function AdminPanel() {
                 key={d.id}
                 className="flex flex-wrap items-center justify-between gap-2 border-b py-2"
               >
-                <span>
-                  {d.userEmail} — ${d.amount.toFixed(2)}
-                  {d.note ? ` (${d.note})` : ""}
+                <span className="min-w-0 flex-1">
+                  <span className="block font-medium">{d.userEmail}</span>
+                  <span className="block text-slate-600">
+                    ${d.amount.toFixed(2)} · {d.network?.toUpperCase() ?? "?"}
+                  </span>
+                  <span className="block break-all font-mono text-xs text-slate-500">
+                    From: {d.senderAddress || "—"}
+                  </span>
+                  {d.note ? (
+                    <span className="block text-xs text-slate-400">{d.note}</span>
+                  ) : null}
                 </span>
                 <span className="flex gap-2">
                   <button

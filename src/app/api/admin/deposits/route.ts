@@ -25,6 +25,8 @@ export async function GET() {
       createdAt: d.createdAt,
       userEmail: d.user.email,
       userName: d.user.name,
+      network: d.network,
+      senderAddress: d.senderAddress,
     }))
   );
 }

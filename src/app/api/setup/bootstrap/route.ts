@@ -1,6 +1,9 @@
 import { NextResponse } from "next/server";
 import { execSync } from "node:child_process";
 
+export const runtime = "nodejs";
+export const maxDuration = 60;
+
 export async function POST(req: Request) {
   const setupSecret = process.env.SETUP_SECRET;
   if (!setupSecret) {
@@ -29,15 +32,24 @@ export async function POST(req: Request) {
       cwd: root,
       env: process.env,
       stdio: "pipe",
+      timeout: 120_000,
     });
     execSync("npx tsx prisma/seed.ts", {
       cwd: root,
       env: process.env,
       stdio: "pipe",
+      timeout: 120_000,
     });
     return NextResponse.json({ ok: true });
   } catch (e) {
     console.error("bootstrap", e);
-    return NextResponse.json({ error: "bootstrap_failed" }, { status: 500 });
+    const stderr =
+      e && typeof e === "object" && "stderr" in e
+        ? String((e as { stderr?: Buffer }).stderr ?? "")
+        : "";
+    return NextResponse.json(
+      { error: "bootstrap_failed", detail: stderr.slice(-500) },
+      { status: 500 }
+    );
   }
 }

@@ -1,3 +1,4 @@
+import { createClient } from "@libsql/client";
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
@@ -15,6 +16,28 @@ function envMeta() {
     hasJwtSecret: Boolean(process.env.JWT_SECRET?.trim()),
     bootstrapConfigured: Boolean(process.env.SETUP_SECRET?.trim()),
   };
+}
+
+async function tursoChecks() {
+  const url = process.env.DATABASE_URL ?? "";
+  const authToken = process.env.TURSO_AUTH_TOKEN?.trim();
+  if (!url.startsWith("libsql:") || !authToken) {
+    return { libsqlReachable: false, userTable: false };
+  }
+  const client = createClient({ url, authToken });
+  try {
+    await client.execute("SELECT 1");
+  } catch {
+    return { libsqlReachable: false, userTable: false };
+  }
+  try {
+    const rows = await client.execute(
+      "SELECT name FROM sqlite_master WHERE type='table' AND name='User'"
+    );
+    return { libsqlReachable: true, userTable: rows.rows.length > 0 };
+  } catch {
+    return { libsqlReachable: true, userTable: false };
+  }
 }
 
 export async function GET() {
@@ -44,28 +67,52 @@ export async function GET() {
     );
   }
 
+  const turso = await tursoChecks();
+
+  if (meta.urlType === "libsql" && !turso.libsqlReachable) {
+    return NextResponse.json(
+      {
+        ok: false,
+        reason: "turso_unreachable",
+        hint: "Check DATABASE_URL and TURSO_AUTH_TOKEN (Turso dashboard → Create Token). Redeploy.",
+        ...meta,
+        ...turso,
+      },
+      { status: 503 }
+    );
+  }
+
+  if (meta.urlType === "libsql" && turso.libsqlReachable && !turso.userTable) {
+    return NextResponse.json(
+      {
+        ok: false,
+        reason: "schema_not_applied",
+        hint:
+          "Run bootstrap once: POST /api/setup/bootstrap with { \"secret\": \"YOUR_SETUP_SECRET\" }.",
+        ...meta,
+        ...turso,
+      },
+      { status: 503 }
+    );
+  }
+
   try {
     await prisma.user.count();
-    return NextResponse.json({ ok: true, ...meta });
+    return NextResponse.json({ ok: true, ...meta, ...turso });
   } catch (e) {
     console.error("db health", e);
     const message = e instanceof Error ? e.message : "";
-    const reason =
-      /no such table|does not exist|SQLITE_ERROR/i.test(message)
-        ? "schema_not_applied"
-        : /Unauthorized|401|authentication/i.test(message)
-          ? "turso_auth_failed"
-          : "db_error";
+    const reason = /Unauthorized|401|authentication/i.test(message)
+      ? "turso_auth_failed"
+      : "prisma_error";
 
     const hint =
-      reason === "schema_not_applied"
-        ? "Run POST /api/setup/bootstrap once (needs SETUP_SECRET) or npm run db:production:setup locally."
-        : reason === "turso_auth_failed"
-          ? "Regenerate Turso token, update TURSO_AUTH_TOKEN on Vercel, Redeploy."
-          : "Check Vercel env vars and function logs.";
+      reason === "turso_auth_failed"
+        ? "Regenerate Turso token, update TURSO_AUTH_TOKEN on Vercel, Redeploy."
+        : "Turso is reachable but Prisma failed — redeploy latest commit or check Vercel function logs.";
 
     return NextResponse.json(
-      { ok: false, reason, hint, ...meta },
+      { ok: false, reason, hint, ...meta, ...turso },
       { status: 503 }
     );
   }

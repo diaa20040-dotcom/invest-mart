@@ -3,7 +3,7 @@ import type { NextRequest } from "next/server";
 import { LOCALE_COOKIE } from "@/lib/locale";
 import { SESSION_COOKIE, hasValidSession } from "@/lib/session-edge";
 
-const PUBLIC_PAGES = ["/login", "/register"];
+const PUBLIC_PAGES = ["/login", "/register", "/setup"];
 
 function isPublicPage(pathname: string) {
   return PUBLIC_PAGES.some((p) => pathname === p || pathname.startsWith(`${p}/`));

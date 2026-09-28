@@ -46,7 +46,7 @@ export function AdminPanel() {
   const [deposits, setDeposits] = useState<PendingDeposit[]>([]);
   const [depositWallet, setDepositWallet] = useState("");
   const [withdrawWallet, setWithdrawWallet] = useState("");
-  const [referralPercent, setReferralPercent] = useState(10);
+  const [referralPercent, setReferralPercent] = useState(25);
   const [newPlan, setNewPlan] = useState(emptyPlanForm);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editPlan, setEditPlan] = useState(emptyPlanForm);

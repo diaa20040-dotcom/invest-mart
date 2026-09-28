@@ -13,9 +13,9 @@ async function main() {
       id: 1,
       depositWallet: "YOUR_DEPOSIT_WALLET_ADDRESS",
       withdrawWallet: "YOUR_PAYOUT_WALLET_ADDRESS",
-      referralPercent: 10,
+      referralPercent: 25,
     },
-    update: {},
+    update: { referralPercent: 25 },
   });
 
   const plans = [

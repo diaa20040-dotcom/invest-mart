@@ -23,7 +23,7 @@ export default async function ReferralsPage() {
   });
 
   const settings = await prisma.siteSetting.findUnique({ where: { id: 1 } });
-  const percent = settings?.referralPercent ?? 10;
+  const percent = settings?.referralPercent ?? 25;
 
   return (
     <div className="space-y-6">

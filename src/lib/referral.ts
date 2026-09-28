@@ -11,7 +11,7 @@ export async function creditReferralBonus(
   if (!depositor?.referredById) return;
 
   const settings = await prisma.siteSetting.findUnique({ where: { id: 1 } });
-  const percent = settings?.referralPercent ?? 10;
+  const percent = settings?.referralPercent ?? 25;
   const bonus = (depositAmount * percent) / 100;
   if (bonus <= 0) return;
 

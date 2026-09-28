@@ -82,5 +82,5 @@ model SiteSetting {
   id              Int    @id @default(1)
   depositWallet   String @default("TBD_DEPOSIT_WALLET")
   withdrawWallet  String @default("TBD_WITHDRAW_WALLET")
-  referralPercent Float  @default(10)
+  referralPercent Float  @default(25)
 }
